@@ -1,6 +1,7 @@
 package code.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,9 +12,6 @@ import java.util.List;
 @Table(name = "Employee")
 public class Employee extends User{
     @ManyToOne()
-    @JoinColumn(name="Role_id")
-    private Role role;
-    @ManyToOne()
     @JoinColumn(name="Qualification_id")
     private Qualification qualification;
 
@@ -21,32 +19,30 @@ public class Employee extends User{
     private List<Project> projects;
 
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
     private List<Task> tasks;
 
     @ManyToOne()
     private Company company;
 
 
-    public Employee(String name, String surname, String login, String password, Qualification qualification, Role role) {
-        super(name, surname, login, password);
+    public Employee(String name, String surname, String login, String password, Qualification qualification, String role) {
+        super(name, surname, login, password, role);
         this.qualification = qualification;
-        this.role = role;
     }
 
     public Employee() {
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }
 
-    public Role getRole() {
-        return role;
+    public void addTask(Task task) {
+        if(tasks == null){
+            tasks = new ArrayList<Task>();
+        }
+        tasks.add(task);
     }
 
     public Qualification getQualification() {

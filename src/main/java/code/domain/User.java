@@ -20,15 +20,18 @@ public class User {
     private String login;
     @Column(name = "Password", nullable = false)
     private String password;
+    @Column(name = "Role", nullable = false)
+    private String role;
 
     public User() {
     }
 
-    public User(String name, String surname, String login, String password) {
+    public User(String name, String surname, String login, String password, String role) {
         this.name = name;
         this.surname = surname;
         this.login = login;
         this.password = password;
+        this.role = role;
     }
 
     public Long getUserId() {
@@ -57,5 +60,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

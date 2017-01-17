@@ -49,4 +49,8 @@ public class Company {
     public void setCustomers(List<Customer> customers) {
         this.customers = customers;
     }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
 }

@@ -17,8 +17,8 @@ public class Customer extends User {
     private Company company;
 
 
-    public Customer(String name, String surname, String login, String password) {
-        super(name, surname, login, password);
+    public Customer(String name, String surname, String login, String password, String role) {
+        super(name, surname, login, password, role);
         projects = new ArrayList<Project>();
     }
 

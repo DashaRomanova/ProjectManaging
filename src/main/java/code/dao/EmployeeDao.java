@@ -1,6 +1,9 @@
 package code.dao;
 
+import code.domain.Company;
 import code.domain.Employee;
+
+import java.util.List;
 
 /**
  * Created by Napha on 11.01.2017.
@@ -12,4 +15,6 @@ public interface EmployeeDao {
     void delete(Employee employee);
 
     Employee findEmployeeByLogin(String login);
+
+    List<Employee> getAllEmployeesByCompanyId(Company company);
 }

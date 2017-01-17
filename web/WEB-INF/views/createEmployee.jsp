@@ -61,10 +61,25 @@
         </div>
         <div class="form-group">
           <div class="col-md-2">
+            <label for="qualification">Select role:</label>
+          </div>
+          <div class="col-md-10">
+            <select class="form-control" id="role" name="role">
+              <% List<String> roles = (List<String>)request.getAttribute("listRoles");
+                for (String role: roles)
+                {
+              %>
+              <option value = "<%=role%>"><%=role%></option>
+              <%}%>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-2">
             <label for="qualification">Select qualification:</label>
           </div>
           <div class="col-md-10">
-            <select class="form-control" id="qualification" name="qualifications">
+            <select class="form-control" id="qualification" name="qualification">
               <% List<Qualification> qualificationList = (List<Qualification>)request.getAttribute("listQualifications");
                 for (Qualification qualification: qualificationList)
                 {
