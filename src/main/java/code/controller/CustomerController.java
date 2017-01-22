@@ -1,5 +1,7 @@
 package code.controller;
 
+import code.dao.CompanyDao;
+import code.domain.Customer;
 import code.domain.Role;
 import code.exception.EntityAlreadyExistException;
 import code.service.CustomerService;
@@ -21,6 +23,9 @@ public class CustomerController {
     public static final Logger log = Logger.getLogger(CustomerController.class);
     @Autowired(required = true)
     private CustomerService customerService;
+
+    @Autowired(required = true)
+    private CompanyDao companyDao;
 
     public CustomerController() {
     }
@@ -45,6 +50,40 @@ public class CustomerController {
 
 
         //model.addAttribute("listQualifications", createDomainsService.getAllQualifications());
-        return "createCustomer";
+        return "showCustomers";
+    }
+
+    @RequestMapping(value = "/showCustomersPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    public String showCustomersPage(Model model) {
+        log.info("/showCustomersPage code.controller.CustomerController");
+
+        model.addAttribute("listCustomers", customerService.getAllCustomersByCompanyId(companyDao.read(new Long(1))));
+        return "showCustomers";
+    }
+
+    @RequestMapping(value = "/editCustomerPage", method = {RequestMethod.GET})
+    public String editCustomerPage(@RequestParam("customerId") Long customerId, Model model) {
+        log.info("/editCustomerPage code.controller.CustomerController");
+        model.addAttribute("customer", customerService.getCustomerById(customerId));
+        return "editCustomer";
+    }
+
+    @RequestMapping(value = "/editCustomer", method = {RequestMethod.POST})
+    public String editCustomer(@RequestParam("customerId") Long customerId,
+                               @RequestParam("name") String name,
+                               @RequestParam("surname") String surname,
+                               @RequestParam("login") String login,
+                               @RequestParam("password") String password){
+        log.info("/editCustomer code.controller.CustomerController");
+
+        Customer customer = customerService.getCustomerById(customerId);
+        customer.setName(name);
+        customer.setSurname(surname);
+        customer.setLogin(login);
+        customer.setPassword(password);
+
+        customerService.updateCustomer(customer);
+
+        return "showCustomers";
     }
 }

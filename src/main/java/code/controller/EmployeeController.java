@@ -1,6 +1,7 @@
 package code.controller;
 
 import code.dao.CompanyDao;
+import code.domain.Employee;
 import code.domain.Role;
 import code.exception.EntityAlreadyExistException;
 import code.service.EmployeeService;
@@ -67,5 +68,35 @@ public class EmployeeController {
 
         model.addAttribute("listEmployees", employeeService.getAllEmployeesByCompanyId(companyDao.read(new Long(1))));
         return "showEmployees";
+    }
+
+    @RequestMapping(value = "/editEmployeePage", method = {RequestMethod.GET})
+    public String editEmployeePage(@RequestParam("empId") Long empId, Model model) {
+        log.info("/editEmployeePage code.controller.EmployeeController");
+        model.addAttribute("employee", employeeService.getEmployeeById(empId));
+        model.addAttribute("listRoles", Arrays.asList(Role.Employee.name(), Role.ProjectManager.name()));
+        model.addAttribute("listQualifications", qualificationService.getAllQualifications());
+        return "editEmployee";
+    }
+
+    @RequestMapping(value = "/editEmployee", method = {RequestMethod.POST})
+    public String editEmployee(@RequestParam("employeeId") Long employeeId,
+                               @RequestParam("name") String name,
+                               @RequestParam("surname") String surname,
+                               @RequestParam("login") String login,
+                               @RequestParam("password") String password,
+                               @RequestParam("role") String role,
+                               @RequestParam("qualification") Long qualificationId) {
+        log.info("/editEmployee code.controller.EmployeeController");
+
+        Employee employee = employeeService.getEmployeeById(employeeId);
+        employee.setName(name);
+        employee.setSurname(surname);
+        employee.setLogin(login);
+        employee.setPassword(password);
+        employee.setRole(role);
+        employee.setQualification(qualificationService.getQualificationById(qualificationId));
+        employeeService.updateEmployee(employee);
+        return "createEmployee";
     }
 }

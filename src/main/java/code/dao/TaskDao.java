@@ -1,6 +1,9 @@
 package code.dao;
 
+import code.domain.Status;
 import code.domain.Task;
+
+import java.util.List;
 
 /**
  * Created by Napha on 14.01.2017.
@@ -12,4 +15,6 @@ public interface TaskDao {
     void delete(Task task);
 
     Task findTaskByName(String name);
+
+    List<Task> findTasksByStatus(Status status);
 }

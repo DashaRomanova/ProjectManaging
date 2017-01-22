@@ -1,7 +1,8 @@
-package code.service;
+package code.service.impl;
 
 import code.dao.QualificationDao;
 import code.domain.Qualification;
+import code.service.QualificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +14,11 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class QualificationServiceImpl implements QualificationService{
+public class QualificationServiceImpl implements QualificationService {
     @Autowired(required = true)
     private QualificationDao qualificationDao;
+
+
     public List getAllQualifications() {
         return qualificationDao.getAllQualifications();
     }

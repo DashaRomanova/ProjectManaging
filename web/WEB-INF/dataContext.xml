@@ -10,34 +10,34 @@
         http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-       <context:component-scan base-package="code.dao"/>
+    <context:component-scan base-package="code.dao"/>
 
-       <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-              <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-              <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE" />
-              <property name="username" value="PROJECTMANAGING" />
-              <property name="password" value="1234" />
-       </bean>
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE" />
+        <property name="username" value="PROJECTMANAGING" />
+        <property name="password" value="1234" />
+    </bean>
 
-       <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-              <property name="dataSource" ref="dataSource"/>
-              <property name="packagesToScan">
-                     <list>
-                            <value>code.domain</value>
-                     </list>
-              </property>
-              <property name="hibernateProperties">
-                     <value>
-                            hibernate.dialect=org.hibernate.dialect.Oracle10gDialect
-                            hibernate.show_sql=true
-                            hibernate.hbm2ddl.auto=update
-                     </value>
-              </property>
-       </bean>
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan">
+            <list>
+                <value>code.domain</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=org.hibernate.dialect.Oracle10gDialect
+                hibernate.show_sql=true
+                hibernate.hbm2ddl.auto=update
+            </value>
+        </property>
+    </bean>
 
-       <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-              <property name="sessionFactory" ref="sessionFactory"/>
-       </bean>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
-       <tx:annotation-driven transaction-manager="transactionManager"/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 </beans>

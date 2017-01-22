@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "Customer")
 public class Customer extends User {
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private List<Project> projects;
 
     @ManyToOne()

@@ -49,14 +49,14 @@ public class Task{
     @JoinColumn(name = "Parent_influencing_task_id")
     private Task parentInfluencingTask;
 
-    @OneToMany(mappedBy = "parentInfluencingTask")
+    @OneToMany(mappedBy = "parentInfluencingTask", fetch = FetchType.EAGER)
     private List<Task> influencingTasks;
 
     @ManyToOne()
     @JoinColumn(name = "Parent_sub_task_id")
     private Task parentSubTask;
 
-    @OneToMany(mappedBy = "parentSubTask")
+    @OneToMany(mappedBy = "parentSubTask", fetch = FetchType.EAGER)
     private List<Task> subTasks;
 
     @ManyToOne()

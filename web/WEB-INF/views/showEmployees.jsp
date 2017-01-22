@@ -1,6 +1,5 @@
-<%@ page import="code.domain.Employee" %>
-<%@ page import="java.util.List" %>
-<%@ page import="code.domain.Task" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%--
   Created by IntelliJ IDEA.
   User: Napha
@@ -28,8 +27,9 @@
   <table class="table table-hover">
     <thead>
     <tr>
-      <th>Firstname</th>
-      <th>Lastname</th>
+      <th>#</th>
+      <th>First name</th>
+      <th>Last name</th>
       <th>Qualification</th>
       <th>Role</th>
       <th>Tasks</th>
@@ -37,33 +37,31 @@
     </tr>
     </thead>
     <tbody>
-      <% List<Employee> employees= (List<Employee>) request.getAttribute("listEmployees");
-        for (Employee employee: employees)
-        {
-      %>
-      <tr>
-        <td><%=employee.getName()%></td>
-        <td><%=employee.getSurname()%></td>
-        <td><%=employee.getQualification().getQualificationName()%></td>
-        <td><%=employee.getRole()%></td>
-        <td>
-          <select class="form-control">
-            <%if(employee.getTasks()!= null){
-              for (Task task: employee.getTasks())
-              {
-              %>
-              <option value = "<%=task.getTaskId()%>"><%=task.getTaskName()%></option>
-              <%}%>
-            <%}%>
-          </select>
-        </td>
-        <td><a class="btn btn-default" href="#" role="button">Edit</a></td>
-      </tr>
-    <%}%>
+    <c:if test= "${fn:length(listEmployees) > 0}">
+      <c:forEach items="${listEmployees}" var="employee" varStatus="loopStatus">
+        <tr>
+          <td>${loopStatus.index+1}</td>
+          <td>${employee.name}</td>
+          <td>${employee.surname}</td>
+          <td>${employee.qualification.qualificationName}</td>
+          <td>${employee.role}</td>
+          <td>
+            <select class="form-control" path="employee.tasks">
+              <c:if test= "${fn:length(employee.tasks) > 0}">
+                <c:forEach items="${employee.tasks}" var="task">
+                  <option value = "${task.taskId}">${task.taskName}</option>
+                </c:forEach>
+              </c:if>
+            </select>
+          </td>
+          <td><a class="btn btn-default" href="/editEmployeePage?empId=${employee.userId}" role="button">Edit</a></td>
+        </tr>
+      </c:forEach>
+    </c:if>
     </tbody>
   </table>
   <div class="col-md-offset-1 col-sm-11">
-    <a class="btn btn-primary" href="#" role="button">Add new employee</a></td>
+    <a class="btn btn-primary" href="/createEmployeePage" role="button">Add new employee</a></td>
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

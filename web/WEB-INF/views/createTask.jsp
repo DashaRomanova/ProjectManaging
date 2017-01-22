@@ -1,5 +1,4 @@
-<%@ page import="code.domain.Qualification" %>
-<%@ page import="java.util.List" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Napha
@@ -33,27 +32,17 @@
         <span class="glyphicon form-control-feedback"></span>
       </div>
     </div>
-    <div class="form-group has-feedback">
-      <div class="col-md-2">
-        <label class="control-label" for="employeeId">ID of employee:</label>
-      </div>
-      <div class="col-md-10">
-        <input type="text" class="form-control" id="employeeId" name="employeeId" placeholder="Enter ID of employee">
-        <span class="glyphicon form-control-feedback"></span>
-      </div>
-    </div>
     <div class="form-group">
       <div class="col-md-2">
         <label for="qualification">Select qualification:</label>
       </div>
       <div class="col-md-10">
         <select class="form-control" id="qualification" name="qualifications">
-          <% List<Qualification> qualificationList = (List<Qualification>)request.getAttribute("listQualifications");
-            for (Qualification qualification: qualificationList)
-            {
-          %>
-          <option value = "<%=qualification.getQualificationId()%>"><%=qualification.getQualificationName()%></option>
-          <%}%>
+          <c:if test= "${fn:length(listQualifications) > 0}">
+            <c:forEach items="${listQualifications}" var="qualification">
+              <option value = "${qualification.qualificationId}">${qualification.qualificationName}</option>
+            </c:forEach>
+          </c:if>
         </select>
       </div>
     </div>

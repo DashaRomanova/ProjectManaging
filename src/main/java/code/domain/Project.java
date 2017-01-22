@@ -17,15 +17,15 @@ public class Project {
     @Column(name = "Project_id")
     private Long projectId;
 
-    @Column(name = "Name")
+    @Column(name = "Name", unique = true, nullable = false)
     private String projectName;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "Start_date")
+    @Column(name = "Start_date", nullable = false)
     private Date projectStartDate;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "Finish_date")
+    @Column(name = "Finish_date", nullable = false)
     private Date projectFinishDate;
 
     @ManyToOne()
@@ -35,13 +35,16 @@ public class Project {
     @ManyToOne()
     private Customer customer;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<Sprint> sprints;
 
     public Project(String projectName, Date projectStartDate, Date projectFinishDate) {
         this.projectName = projectName;
         this.projectStartDate = projectStartDate;
         this.projectFinishDate = projectFinishDate;
+    }
+
+    public Project() {
     }
 
     public void setProjectManager(Employee projectManager) {
@@ -74,5 +77,25 @@ public class Project {
 
     public List<Sprint> getSprints() {
         return sprints;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public void setProjectStartDate(Date projectStartDate) {
+        this.projectStartDate = projectStartDate;
+    }
+
+    public void setProjectFinishDate(Date projectFinishDate) {
+        this.projectFinishDate = projectFinishDate;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Customer getCustomer() {
+        return customer;
     }
 }

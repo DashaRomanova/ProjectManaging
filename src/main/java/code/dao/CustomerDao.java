@@ -1,6 +1,9 @@
 package code.dao;
 
+import code.domain.Company;
 import code.domain.Customer;
+
+import java.util.List;
 
 /**
  * Created by Napha on 11.01.2017.
@@ -12,4 +15,5 @@ public interface CustomerDao {
     void delete(Customer customer);
 
     Customer findCustomerByLogin(String login);
+    List<Customer> getAllCustomersByCompanyId(Company company);
 }

@@ -1,5 +1,8 @@
 package code.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +18,13 @@ public class Employee extends User{
     @JoinColumn(name="Qualification_id")
     private Qualification qualification;
 
-    @OneToMany(mappedBy = "projectManager")
+    @OneToMany(mappedBy = "projectManager", fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Project> projects;
 
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Task> tasks;
 
     @ManyToOne()
@@ -32,6 +37,7 @@ public class Employee extends User{
     }
 
     public Employee() {
+        projects = new ArrayList<Project>();
     }
 
     public void setTasks(List<Task> tasks) {
@@ -51,5 +57,24 @@ public class Employee extends User{
 
     public List<Task> getTasks() {
         return tasks;
+    }
+
+    public void setQualification(Qualification qualification) {
+        this.qualification = qualification;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
+    public void addProject(Project project) {
+        if(projects == null){
+            projects = new ArrayList<Project>();
+        }
+        projects.add(project);
     }
 }

@@ -1,6 +1,7 @@
 package code.domain;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public class Sprint {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")
     @Column(name = "Sprint_id")
     private Long sprintId;
+    @Column(name = "Name", unique = true, nullable = false)
+    private Long sprintName;
 
     @OneToOne()
     @JoinColumn(name="Previous_sprint", referencedColumnName = "Sprint_id", nullable = true)
@@ -23,7 +26,7 @@ public class Sprint {
     @OneToOne(mappedBy="previousSprint")
     private Sprint parentSprint;
 
-    @OneToMany(mappedBy = "sprint")
+    @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER)
     private List<Task> tasks;
 
     @ManyToOne()
@@ -40,8 +43,8 @@ public class Sprint {
     public Sprint() {
     }
 
-    public Sprint(Sprint previousSprint, Date sprintStartDate, Date sprintFinishDate) {
-        this.previousSprint = previousSprint;
+    public Sprint(Long sprintName, Date sprintStartDate, Date sprintFinishDate) {
+        this.sprintName = sprintName;
         this.sprintStartDate = sprintStartDate;
         this.sprintFinishDate = sprintFinishDate;
     }
@@ -68,5 +71,39 @@ public class Sprint {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+    public void addTask(Task task) {
+        if(tasks == null){
+            tasks = new ArrayList<Task>();
+        }
+        tasks.add(task);
+    }
+
+    public Long getSprintName() {
+        return sprintName;
+    }
+
+    public void setSprintName(Long sprintName) {
+        this.sprintName = sprintName;
+    }
+
+    public void setSprintStartDate(Date sprintStartDate) {
+        this.sprintStartDate = sprintStartDate;
+    }
+
+    public void setSprintFinishDate(Date sprintFinishDate) {
+        this.sprintFinishDate = sprintFinishDate;
+    }
+
+    public void setPreviousSprint(Sprint previousSprint) {
+        this.previousSprint = previousSprint;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

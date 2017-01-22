@@ -1,5 +1,5 @@
-<%@ page import="code.domain.Qualification" %>
-<%@ page import="java.util.List" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%--
   Created by IntelliJ IDEA.
   User: Napha
@@ -61,16 +61,15 @@
         </div>
         <div class="form-group">
           <div class="col-md-2">
-            <label for="qualification">Select role:</label>
+            <label for="role">Select role:</label>
           </div>
           <div class="col-md-10">
             <select class="form-control" id="role" name="role">
-              <% List<String> roles = (List<String>)request.getAttribute("listRoles");
-                for (String role: roles)
-                {
-              %>
-              <option value = "<%=role%>"><%=role%></option>
-              <%}%>
+              <c:if test= "${fn:length(listRoles) > 0}">
+                <c:forEach items="${listRoles}" var="role">
+                  <option value = "${role}">${role}</option>
+                </c:forEach>
+              </c:if>
             </select>
           </div>
         </div>
@@ -80,12 +79,11 @@
           </div>
           <div class="col-md-10">
             <select class="form-control" id="qualification" name="qualification">
-              <% List<Qualification> qualificationList = (List<Qualification>)request.getAttribute("listQualifications");
-                for (Qualification qualification: qualificationList)
-                {
-              %>
-              <option value = "<%=qualification.getQualificationId()%>"><%=qualification.getQualificationName()%></option>
-              <%}%>
+              <c:if test= "${fn:length(listQualifications) > 0}">
+                <c:forEach items="${listQualifications}" var="qualification">
+                  <option value = "${qualification.qualificationId}">${qualification.qualificationName}</option>
+                </c:forEach>
+              </c:if>
             </select>
           </div>
         </div>
