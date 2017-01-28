@@ -26,12 +26,12 @@ public class User {
     public User() {
     }
 
-    public User(String name, String surname, String login, String password, String role) {
+    public User(String name, String surname, String login, String password, Role role) {
         this.name = name;
         this.surname = surname;
         this.login = login;
         this.password = password;
-        this.role = role;
+        this.role = role.name();
     }
 
     public Long getUserId() {
@@ -62,12 +62,12 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public Role getRole() {
+        return Role.valueOf(role);
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRole(Role role) {
+        this.role = role.name();
     }
 
     public void setName(String name) {

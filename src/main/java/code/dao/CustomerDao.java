@@ -12,8 +12,9 @@ public interface CustomerDao {
     Long create(Customer customer);
     Customer read(Long id);
     void update(Customer customer);
-    void delete(Customer customer);
+    void delete(Long id);
 
     Customer findCustomerByLogin(String login);
     List<Customer> getAllCustomersByCompanyId(Company company);
+    List<Customer> getAllCustomers();
 }

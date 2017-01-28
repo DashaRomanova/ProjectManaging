@@ -91,11 +91,11 @@
           <c:if test= "${fn:length(listQualifications) > 0}">
             <c:forEach items="${listQualifications}" var="qualification">
               <c:choose>
-                <c:when test= "${qualification.qualificationId == employee.qualification.qualificationId}">
-                  <option value = "${qualification.qualificationId}" selected >${qualification.qualificationName}</option>
+                <c:when test= "${qualification == employee.qualification}">
+                  <option value = "${qualification}" selected >${qualification}</option>
                 </c:when>
                 <c:otherwise>
-                  <option value = "${qualification.qualificationId}">${qualification.qualificationName}</option>
+                  <option value = "${qualification}">${qualification}</option>
                 </c:otherwise>
               </c:choose>
             </c:forEach>
@@ -103,28 +103,12 @@
         </select>
       </div>
     </div>
-
     <div class="form-group">
-      <div class="col-md-2">
-        <label for="task">Tasks:</label>
-      </div>
-      <div class="col-md-10">
-        <select class="form-control" id="task" name="task">
-          <c:if test= "${fn:length(employee.tasks) > 0}">
-            <c:forEach items="${employee.tasks}" var="task">
-              <option value = "${task.taskId}">${task.taskName}</option>
-            </c:forEach>
-          </c:if>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <a class="btn btn-default" href="/addTaskToEmployee?empId=${employee.userId}" role="button">Add</a>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="col-md-offset-2 col-sm-10">
+      <div class="col-md-offset-2 col-sm-1">
         <button type="submit" class="btn btn-lg btn-primary">Edit</button>
+      </div>
+      <div class="col-sm-9">
+        <a class="btn btn-lg btn-primary" href="/showAllEmployeesPage" role="button">Cancel</a>
       </div>
     </div>
   </form>

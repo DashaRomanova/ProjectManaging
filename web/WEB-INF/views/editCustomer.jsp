@@ -61,28 +61,12 @@
         <input type="text" class="form-control" id="surname" name="surname" value="${customer.surname}" required placeholder="Enter surname">
       </div>
     </div>
-
     <div class="form-group">
-      <div class="col-md-2">
-        <label for="project">Projects:</label>
-      </div>
-      <div class="col-md-10">
-        <select class="form-control" id="project" name="project">
-          <c:if test= "${fn:length(customer.projects) > 0}">
-            <c:forEach items="${customer.projects}" var="project">
-              <option value = "${project.projectId}">${project.projectName}</option>
-            </c:forEach>
-          </c:if>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <a class="btn btn-default" href="/addProjectToCustomer?customerId=${customer.userId}" role="button">Add</a>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="col-md-offset-2 col-sm-10">
+      <div class="col-md-offset-2 col-sm-1">
         <button type="submit" class="btn btn-lg btn-primary">Edit</button>
+      </div>
+      <div class="col-sm-9">
+        <a class="btn btn-lg btn-primary" href="/showAllCustomersPage" role="button">Cancel</a>
       </div>
     </div>
   </form>

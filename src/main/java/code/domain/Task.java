@@ -18,69 +18,58 @@ public class Task{
     private Long taskId;
     @Column(name = "Name", unique = true, nullable = false)
     private String taskName;
-    @Column(name = "Description")
+    @Column(name = "Description", nullable = false)
     private String taskDescription;
-    @Column(name = "Estimate")
-    private int estimate;
+    @Column(name = "Estimate", nullable = false)
+    private Integer estimate;
     @Column(name = "Requested_estimate")
-    private String requestedEstimate;
+    private Integer requestedEstimate;
     @Temporal(TemporalType.DATE)
-    @Column(name = "Expiration_date")
-    private Date expirationDate;
+    @Column(name = "Start_date")
+    private Date startDate;
     @Temporal(TemporalType.DATE)
-    @Column(name = "Requested_expiration_date")
-    private Date requestedExpirationDate;
+    @Column(name = "Expected_completion_date")
+    private Date expectedCompletionDate;
     @Temporal(TemporalType.DATE)
     @Column(name = "Actual_completion_date")
     private Date actualCompletionDate;
 
-    @Column(name="Status")
+    @Column(name="Status", nullable = false)
     private String status;
 
     @ManyToOne()
-    @JoinColumn(name="Employee")
+    @JoinColumn(name="Employee", nullable = true)
     private Employee employee;
 
-    @ManyToOne()
-    @JoinColumn(name="Qualification_id")
-    private Qualification taskQualification;
+    @Column(name = "Qualification", nullable = false)
+    private String taskQualification;
 
     @ManyToOne()
     @JoinColumn(name = "Parent_influencing_task_id")
     private Task parentInfluencingTask;
 
-    @OneToMany(mappedBy = "parentInfluencingTask", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parentInfluencingTask", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Task> influencingTasks;
-
-    @ManyToOne()
-    @JoinColumn(name = "Parent_sub_task_id")
-    private Task parentSubTask;
-
-    @OneToMany(mappedBy = "parentSubTask", fetch = FetchType.EAGER)
-    private List<Task> subTasks;
 
     @ManyToOne()
     private Sprint sprint;
 
+    @ManyToOne()
+    private Project project;
+
 
     public Task() {
-        influencingTasks = new ArrayList<Task>();
-        subTasks = new ArrayList<Task>();
     }
 
-    public Task(String taskName, String taskDescription, int estimate, Date expirationDate, String status, Qualification taskQualification) {
-        this();
+    public Task(String taskName, String taskDescription, int estimate, Status status, Qualification taskQualification, Project project) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.estimate = estimate;
-        this.expirationDate = expirationDate;
-        this.status = status;
-        this.taskQualification = taskQualification;
-    }
+        this.status = status.name();
+        this.taskQualification = taskQualification.name();
+        this.project = project;
 
-    public Task(String taskName, String taskDescription, int estimate, Date expirationDate, String status, Employee employee, Qualification taskQualification) {
-        this(taskName, taskDescription, estimate, expirationDate, status, taskQualification);
-        this.employee = employee;
+        influencingTasks = new ArrayList<Task>();
     }
 
     public Long getTaskId() {
@@ -99,24 +88,13 @@ public class Task{
         return estimate;
     }
 
-    public String getRequestedEstimate() {
-        return requestedEstimate;
-    }
-
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
 
     public Date getActualCompletionDate() {
         return actualCompletionDate;
     }
 
-    public Date getRequestedExpirationDate() {
-        return requestedExpirationDate;
-    }
-
-    public String getStatus() {
-        return status;
+    public Status getStatus() {
+        return Status.valueOf(status);
     }
 
     public Employee getEmployee() {
@@ -124,15 +102,11 @@ public class Task{
     }
 
     public Qualification getTaskQualification() {
-        return taskQualification;
+        return Qualification.valueOf(taskQualification);
     }
 
     public List<Task> getInfluencingTasks() {
         return influencingTasks;
-    }
-
-    public List<Task> getSubTasks() {
-        return subTasks;
     }
 
     public void setTaskId(Long taskId) {
@@ -151,24 +125,13 @@ public class Task{
         this.estimate = estimate;
     }
 
-    public void setRequestedEstimate(String requestedEstimate) {
-        this.requestedEstimate = requestedEstimate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
-    public void setRequestedExpirationDate(Date requestedExpirationDate) {
-        this.requestedExpirationDate = requestedExpirationDate;
-    }
 
     public void setActualCompletionDate(Date actualCompletionDate) {
         this.actualCompletionDate = actualCompletionDate;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(Status status) {
+        this.status = status.name();
     }
 
     public void setEmployee(Employee employee) {
@@ -176,7 +139,7 @@ public class Task{
     }
 
     public void setTaskQualification(Qualification taskQualification) {
-        this.taskQualification = taskQualification;
+        this.taskQualification = taskQualification.name();
     }
 
     public Task getParentInfluencingTask() {
@@ -191,23 +154,51 @@ public class Task{
         this.influencingTasks = influencingTasks;
     }
 
-    public Task getParentSubTask() {
-        return parentSubTask;
-    }
-
-    public void setParentSubTask(Task parentSubTask) {
-        this.parentSubTask = parentSubTask;
-    }
-
-    public void setSubTasks(List<Task> subTasks) {
-        this.subTasks = subTasks;
-    }
-
     public Sprint getSprint() {
         return sprint;
     }
 
     public void setSprint(Sprint sprint) {
         this.sprint = sprint;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public void addInfluencingTask(Task influencingTask){
+        if(this.influencingTasks == null){
+            this.influencingTasks = new ArrayList<Task>();
+        }
+        this.influencingTasks.add(influencingTask);
+
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getExpectedCompletionDate() {
+        return expectedCompletionDate;
+    }
+
+    public void setExpectedCompletionDate(Date expectedCompletionDate) {
+        this.expectedCompletionDate = expectedCompletionDate;
+    }
+
+    public Integer getRequestedEstimate() {
+        return requestedEstimate;
+    }
+
+    public void setRequestedEstimate(Integer requestedEstimate) {
+        this.requestedEstimate = requestedEstimate;
     }
 }

@@ -10,14 +10,14 @@ import java.util.List;
 @Entity
 @Table(name = "Customer")
 public class Customer extends User {
-    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Project> projects;
 
     @ManyToOne()
     private Company company;
 
 
-    public Customer(String name, String surname, String login, String password, String role) {
+    public Customer(String name, String surname, String login, String password, Role role) {
         super(name, surname, login, password, role);
         projects = new ArrayList<Project>();
     }

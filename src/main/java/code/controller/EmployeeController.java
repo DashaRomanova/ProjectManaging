@@ -1,11 +1,10 @@
 package code.controller;
 
-import code.dao.CompanyDao;
-import code.domain.Employee;
-import code.domain.Role;
+import code.domain.*;
 import code.exception.EntityAlreadyExistException;
+import code.exception.TaskAlreadyCompletedException;
 import code.service.EmployeeService;
-import code.service.QualificationService;
+import code.service.TaskService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,10 +26,7 @@ public class EmployeeController {
     @Autowired(required = true)
     private EmployeeService employeeService;
     @Autowired(required = true)
-    private QualificationService qualificationService;
-
-    @Autowired(required = true)
-    private CompanyDao companyDao;
+    private TaskService taskService;
 
     public EmployeeController() {
     }
@@ -39,7 +35,7 @@ public class EmployeeController {
     public String createEmployeePage(Model model) {
         log.info("/createEmployeePage code.controller.EmployeeController");
         model.addAttribute("listRoles", Arrays.asList(Role.Employee.name(), Role.ProjectManager.name()));
-        model.addAttribute("listQualifications", qualificationService.getAllQualifications());
+        model.addAttribute("listQualifications", Arrays.asList(Qualification.values()));
         return "createEmployee";
     }
 
@@ -49,10 +45,10 @@ public class EmployeeController {
                                  @RequestParam("login") String login,
                                  @RequestParam("password") String password,
                                  @RequestParam("role") String role,
-                                 @RequestParam("qualification") Long qualificationId) throws EntityAlreadyExistException {
+                                 @RequestParam("qualification") String qualification) throws EntityAlreadyExistException {
         log.info("/createEmployee code.controller.EmployeeController");
 //        try {
-        employeeService.createEmployee(name, surname, login, password, qualificationId, role);
+        employeeService.createEmployee(name, surname, login, password, Qualification.valueOf(qualification),Role.valueOf(role));
 //        } catch (EntityAlreadyExistException employeeAlreadyExistsExeption) {
 //            employeeAlreadyExistsExeption.printStackTrace();
 //        }
@@ -62,12 +58,20 @@ public class EmployeeController {
         return "createEmployee";
     }
 
-    @RequestMapping(value = "/showEmployeesPage", method = {RequestMethod.GET, RequestMethod.HEAD})
-    public String showEmployeesPage(Model model) {
-        log.info("/showEmployeesPage code.controller.EmployeeController");
+//    @RequestMapping(value = "/showEmployeesPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+//    public String showEmployeesPage(Model model) {
+//        log.info("/showEmployeesPage code.controller.EmployeeController");
+//
+//        model.addAttribute("listEmployees", employeeService.getAllEmployeesByCompanyId(companyDao.read(new Long(1))));
+//        return "showEmployees";
+//    }
 
-        model.addAttribute("listEmployees", employeeService.getAllEmployeesByCompanyId(companyDao.read(new Long(1))));
-        return "showEmployees";
+    @RequestMapping(value = "/showAllEmployeesPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    public String showAllEmployeesPage(Model model) {
+        log.info("/showAllEmployeesPage code.controller.EmployeeController");
+
+        model.addAttribute("listEmployees", employeeService.getAllEmployees());
+        return "adminDashboardEmployees";
     }
 
     @RequestMapping(value = "/editEmployeePage", method = {RequestMethod.GET})
@@ -75,8 +79,17 @@ public class EmployeeController {
         log.info("/editEmployeePage code.controller.EmployeeController");
         model.addAttribute("employee", employeeService.getEmployeeById(empId));
         model.addAttribute("listRoles", Arrays.asList(Role.Employee.name(), Role.ProjectManager.name()));
-        model.addAttribute("listQualifications", qualificationService.getAllQualifications());
+        model.addAttribute("listQualifications", Arrays.asList(Qualification.values()));
         return "editEmployee";
+    }
+
+
+    @RequestMapping(value = "/deleteEmployeePage", method = {RequestMethod.GET})
+    public String deleteEmployeePage(@RequestParam("empId") Long empId, Model model) {
+        log.info("/deleteEmployeePage code.controller.EmployeeController");
+        employeeService.deleteEmployee(empId);
+        model.addAttribute("listEmployees", employeeService.getAllEmployees());
+        return "adminDashboardEmployees";
     }
 
     @RequestMapping(value = "/editEmployee", method = {RequestMethod.POST})
@@ -86,7 +99,7 @@ public class EmployeeController {
                                @RequestParam("login") String login,
                                @RequestParam("password") String password,
                                @RequestParam("role") String role,
-                               @RequestParam("qualification") Long qualificationId) {
+                               @RequestParam("qualification") String qualification) {
         log.info("/editEmployee code.controller.EmployeeController");
 
         Employee employee = employeeService.getEmployeeById(employeeId);
@@ -94,9 +107,23 @@ public class EmployeeController {
         employee.setSurname(surname);
         employee.setLogin(login);
         employee.setPassword(password);
-        employee.setRole(role);
-        employee.setQualification(qualificationService.getQualificationById(qualificationId));
+        employee.setRole(Role.valueOf(role));
+        employee.setQualification(Qualification.valueOf(qualification));
         employeeService.updateEmployee(employee);
         return "createEmployee";
+    }
+
+    @RequestMapping(value = "/chooseEmployeeForTask", method = {RequestMethod.GET, RequestMethod.HEAD})
+    public String chooseProjectForTaskPage(@RequestParam("taskId") Long taskId,
+                                           @RequestParam("taskQualification") String taskQualification,
+                                           Model model) throws TaskAlreadyCompletedException{
+        log.info("/createTaskPage code.controller.TaskController");
+        Task task = taskService.getTaskById(taskId);
+        if (Status.Completed.equals(task.getStatus())) {
+            throw new TaskAlreadyCompletedException("Task <" + task.getTaskName() + "> already completed! Can not be edit.");
+        }
+        model.addAttribute("task", taskService.getTaskById(taskId));
+        model.addAttribute("listEmployees", employeeService.getAllEmployeesByQualificationAndRole(Qualification.valueOf(taskQualification), Role.Employee));
+        return "chooseEmployee";
     }
 }

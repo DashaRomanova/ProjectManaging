@@ -14,7 +14,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Employees</title>
+  <title>Customers</title>
 
   <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -22,7 +22,7 @@
 <body>
 <div class="container">
   <div class="row">
-    <h1>Employees</h1>
+    <h1>Choose customer</h1>
   </div>
   <table class="table table-hover">
     <thead>
@@ -30,38 +30,22 @@
       <th>#</th>
       <th>First name</th>
       <th>Last name</th>
-      <th>Qualification</th>
-      <th>Role</th>
-      <th>Tasks</th>
-      <th>Edit</th>
     </tr>
     </thead>
     <tbody>
-    <c:if test= "${fn:length(listEmployees) > 0}">
-      <c:forEach items="${listEmployees}" var="employee" varStatus="loopStatus">
-        <tr>
+    <c:if test= "${fn:length(listCustomers) > 0}">
+      <c:forEach items="${listCustomers}" var="customer" varStatus="loopStatus">
+        <tr onclick="location.href='/createProjectPage?customerId=${customer.userId}'">
           <td>${loopStatus.index+1}</td>
-          <td>${employee.name}</td>
-          <td>${employee.surname}</td>
-          <td>${employee.qualification.qualificationName}</td>
-          <td>${employee.role}</td>
-          <td>
-            <select class="form-control" path="employee.tasks">
-              <c:if test= "${fn:length(employee.tasks) > 0}">
-                <c:forEach items="${employee.tasks}" var="task">
-                  <option value = "${task.taskId}">${task.taskName}</option>
-                </c:forEach>
-              </c:if>
-            </select>
-          </td>
-          <td><a class="btn btn-default" href="/editEmployeePage?empId=${employee.userId}" role="button">Edit</a></td>
+          <td>${customer.name}</td>
+          <td>${customer.surname}</td>
         </tr>
       </c:forEach>
     </c:if>
     </tbody>
   </table>
   <div class="col-md-offset-1 col-sm-11">
-    <a class="btn btn-primary" href="/createEmployeePage" role="button">Add new employee</a></td>
+    <a class="btn btn-lg btn-primary" href="/showAllProjectsPage" role="button">Cancel</a>
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

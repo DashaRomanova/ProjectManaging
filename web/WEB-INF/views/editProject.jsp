@@ -29,7 +29,7 @@
       <div class="col-md-2">
         <label class="control-label" for="name">Name:</label>
       </div>
-      <div class="col-md-10">
+      <div class="col-md-8">
         <input type="hidden" id="projectId" name="projectId" value="${project.projectId}"/>
         <input type="text" class="form-control" id="name" name="name" value="${project.projectName}" required placeholder="Enter name">
         <span class="glyphicon form-control-feedback"></span>
@@ -39,7 +39,7 @@
       <div class="col-md-2">
         <label class="control-label" for="startDate">Start date:</label>
       </div>
-      <div class="col-md-10">
+      <div class="col-md-8">
         <input type="date" class="form-control" id="startDate" name="startDate" value="${project.projectStartDate}" required placeholder="Enter expected start date">
         <span class="glyphicon form-control-feedback"></span>
       </div>
@@ -48,7 +48,7 @@
       <div class="col-md-2">
         <label class="control-label" for="finishDate">Finish date:</label>
       </div>
-      <div class="col-md-10">
+      <div class="col-md-8">
         <input type="date" class="form-control" id="finishDate" name="finishDate" value="${project.projectFinishDate}" required placeholder="Enter expected finish date">
         <span class="glyphicon form-control-feedback"></span>
       </div>
@@ -56,25 +56,39 @@
 
     <div class="form-group">
       <div class="col-md-2">
-        <label for="sprints">Sprints:</label>
+        <label for="manager">Project Manager:</label>
       </div>
-      <div class="col-md-10">
-        <select id="sprints" name="sprint" class="form-control" path="project.sprints">
-          <c:if test= "${fn:length(project.sprints) > 0}">
-            <c:forEach items="${project.sprints}" var="sprint">
-              <option value = "${sprint.sprintId}">${sprint.sprintId}</option>
-            </c:forEach>
+      <div class="col-md-7">
+        <select id="manager" name="manager" class="form-control">
+          <c:if test= "${fn:length(listManagers) > 0}">
+            <c:choose>
+              <c:when test= "${project.projectManager == null}">
+                <option value = "-1" selected>None</option>
+              </c:when>
+              <c:otherwise>
+                <c:forEach items="${listManagers}" var="manager">
+                  <c:choose>
+                    <c:when test= "${manager.userId == project.projectManager.userId}">
+                      <option value = "${manager.userId}" selected>${manager.surname} ${manager.name}</option>
+                    </c:when>
+                    <c:otherwise>
+                      <option value = "${manager.userId}">${manager.surname} ${manager.name}</option>
+                    </c:otherwise>
+                  </c:choose>
+                </c:forEach>
+              </c:otherwise>
+            </c:choose>
           </c:if>
         </select>
-      </div>
-      <div class="col-md-2">
-        <a class="btn btn-default" href="/addSprintToProject?projectId=${project.projectId}" role="button">Add</a>
       </div>
     </div>
 
     <div class="form-group">
-      <div class="col-md-offset-2 col-sm-10">
+      <div class="col-md-offset-2 col-sm-1">
         <button type="submit" class="btn btn-lg btn-primary">Edit</button>
+      </div>
+      <div class="col-sm-9">
+        <a class="btn btn-lg btn-primary" href="/showAllProjectsPage" role="button">Cancel</a>
       </div>
     </div>
   </form>

@@ -10,6 +10,7 @@
 
     <properties>
         <spring-framework-version>4.3.5.RELEASE</spring-framework-version>
+        <spring.securiry>4.2.0.RELEASE</spring.securiry>
     </properties>
 
     <dependencies>
@@ -137,8 +138,6 @@
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
         </dependency>
-
-
 
 
     </dependencies>

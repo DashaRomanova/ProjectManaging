@@ -1,6 +1,5 @@
 package code.controller;
 
-import code.dao.CompanyDao;
 import code.domain.Customer;
 import code.domain.Role;
 import code.exception.EntityAlreadyExistException;
@@ -24,8 +23,6 @@ public class CustomerController {
     @Autowired(required = true)
     private CustomerService customerService;
 
-    @Autowired(required = true)
-    private CompanyDao companyDao;
 
     public CustomerController() {
     }
@@ -40,29 +37,49 @@ public class CustomerController {
     public String createCustomer(@RequestParam("name") String name,
                                  @RequestParam("surname") String surname,
                                  @RequestParam("login") String login,
-                                 @RequestParam("password") String password) throws EntityAlreadyExistException {
+                                 @RequestParam("password") String password,
+                                 Model model) throws EntityAlreadyExistException {
         log.info("/createCustomer code.controller.CustomerController");
-//        try {
-        customerService.createCustomer(name, surname, login, password, Role.Customer.name());
-//        } catch (EntityAlreadyExistException employeeAlreadyExistsExeption) {
-//            employeeAlreadyExistsExeption.printStackTrace();
-//        }
+        customerService.createCustomer(name, surname, login, password, Role.Customer);
 
-
-        //model.addAttribute("listQualifications", createDomainsService.getAllQualifications());
-        return "showCustomers";
+        model.addAttribute("listCustomers", customerService.getAllCustomers());
+        return "adminDashboardCustomer";
     }
 
-    @RequestMapping(value = "/showCustomersPage", method = {RequestMethod.GET, RequestMethod.HEAD})
-    public String showCustomersPage(Model model) {
-        log.info("/showCustomersPage code.controller.CustomerController");
+    @RequestMapping(value = "/chooseCustomerForProjectPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    public String chooseCustomerForProjectPage(Model model) {
+        log.info("/chooseCustomerForProjectPage code.controller.ProjectController");
+        model.addAttribute("listCustomers", customerService.getAllCustomers());
+        return "chooseCustomer";
+    }
 
-        model.addAttribute("listCustomers", customerService.getAllCustomersByCompanyId(companyDao.read(new Long(1))));
-        return "showCustomers";
+//    @RequestMapping(value = "/showCustomersPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+//    public String showCustomersPage(Model model) {
+//        log.info("/showCustomersPage code.controller.CustomerController");
+//
+//        model.addAttribute("listCustomers", customerService.getAllCustomersByCompanyId(companyDao.read(new Long(1))));
+//        return "showCustomers";
+//    }
+
+    @RequestMapping(value = "/showAllCustomersPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    public String showAllCustomersPage(Model model) {
+        log.info("/showAllCustomersPage code.controller.CustomerController");
+
+        model.addAttribute("listCustomers", customerService.getAllCustomers());
+        return "adminDashboardCustomer";
+    }
+
+    @RequestMapping(value = "/deleteCustomerPage", method = {RequestMethod.GET})
+    public String deleteCustomerPage(@RequestParam("customerId") Long customerId, Model model) {
+        log.info("/deleteCustomerPage code.controller.CustomerController");
+        customerService.deleteCustomer(customerId);
+        model.addAttribute("listCustomers", customerService.getAllCustomers());
+        return "adminDashboardCustomer";
     }
 
     @RequestMapping(value = "/editCustomerPage", method = {RequestMethod.GET})
-    public String editCustomerPage(@RequestParam("customerId") Long customerId, Model model) {
+    public String editCustomerPage(@RequestParam("customerId") Long customerId,
+                                   Model model) {
         log.info("/editCustomerPage code.controller.CustomerController");
         model.addAttribute("customer", customerService.getCustomerById(customerId));
         return "editCustomer";
@@ -73,7 +90,8 @@ public class CustomerController {
                                @RequestParam("name") String name,
                                @RequestParam("surname") String surname,
                                @RequestParam("login") String login,
-                               @RequestParam("password") String password){
+                               @RequestParam("password") String password,
+                               Model model){
         log.info("/editCustomer code.controller.CustomerController");
 
         Customer customer = customerService.getCustomerById(customerId);
@@ -84,6 +102,7 @@ public class CustomerController {
 
         customerService.updateCustomer(customer);
 
-        return "showCustomers";
+        model.addAttribute("listCustomers", customerService.getAllCustomers());
+        return "adminDashboardCustomer";
     }
 }

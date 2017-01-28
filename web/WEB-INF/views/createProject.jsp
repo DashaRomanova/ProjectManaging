@@ -23,12 +23,16 @@
   <div class="row">
     <h1>Create Project</h1>
   </div>
+  <div class="row">
+    <h4>Customer: ${customer.surname} ${customer.name}</h4>
+  </div>
   <form class="form-horizontal" action="/createProject" method="POST">
     <div class="form-group has-feedback">
       <div class="col-md-2">
         <label class="control-label" for="name">Name:</label>
       </div>
       <div class="col-md-10">
+        <input type="hidden" id="customerId" name="customerId" value="${customer.userId}"/>
         <input type="text" class="form-control" id="name" name="name" required placeholder="Enter name">
         <span class="glyphicon form-control-feedback"></span>
       </div>
@@ -53,8 +57,27 @@
     </div>
 
     <div class="form-group">
-      <div class="col-md-offset-2 col-sm-10">
+      <div class="col-md-2">
+        <label for="manager">Project Manager:</label>
+      </div>
+      <div class="col-md-7">
+        <select id="manager" name="manager" class="form-control">
+          <option value = "-1">None</option>
+          <c:if test= "${fn:length(listManagers) > 0}">
+            <c:forEach items="${listManagers}" var="manager">
+              <option value = "${manager.userId}">${manager.surname} ${manager.name}</option>
+            </c:forEach>
+          </c:if>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-md-offset-2 col-sm-1">
         <button type="submit" class="btn btn-lg btn-primary">Create</button>
+      </div>
+      <div class="col-sm-9">
+        <a class="btn btn-lg btn-primary" href="/showAllProjectsPage" role="button">Cancel</a>
       </div>
     </div>
   </form>

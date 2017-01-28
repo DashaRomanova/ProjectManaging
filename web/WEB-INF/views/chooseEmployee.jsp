@@ -14,7 +14,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Projects</title>
+  <title>Employees</title>
 
   <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -22,44 +22,29 @@
 <body>
 <div class="container">
   <div class="row">
-    <h1>Projects</h1>
+    <h1>Choose employee</h1>
   </div>
   <table class="table table-hover">
     <thead>
     <tr>
       <th>#</th>
-      <th>Name</th>
-      <th>Start date</th>
-      <th>Finish date</th>
-      <th>Sprints</th>
-      <th>Edit</th>
+      <th>First name</th>
+      <th>Last name</th>
     </tr>
     </thead>
     <tbody>
-    <c:if test= "${fn:length(listProjects) > 0}">
-      <c:forEach items="${listProjects}" var="project" varStatus="loopStatus">
-        <tr>
+    <c:if test= "${fn:length(listEmployees) > 0}">
+      <c:forEach items="${listEmployees}" var="employee" varStatus="loopStatus">
+        <tr onclick="location.href='/addEmployeeForTask?taskId=${task.taskId}&empId=${employee.userId}'">
           <td>${loopStatus.index+1}</td>
-          <td>${project.projectName}</td>
-          <td>${project.projectStartDate}</td>
-          <td>${project.projectFinishDate}</td>
-          <td>
-            <select class="form-control" path="project.sprints">
-              <c:if test= "${fn:length(project.sprints) > 0}">
-                <c:forEach items="${project.sprints}" var="sprint">
-                  <option value = "${sprint.sprintId}">${sprint.sprintId}</option>
-                </c:forEach>
-              </c:if>
-            </select>
-          </td>
-          <td><a class="btn btn-default" href="/editProjectPage?projectId=${project.projectId}" role="button">Edit</a></td>
-        </tr>
+          <td>${employee.name}</td>
+          <td>${employee.surname}</td>
       </c:forEach>
     </c:if>
     </tbody>
   </table>
   <div class="col-md-offset-1 col-sm-11">
-    <a class="btn btn-primary" href="/createProjectPage" role="button">Add new project</a></td>
+    <a class="btn btn-lg btn-primary" href="/showAllTasksByProjectManagerIdPage?managerId=${task.project.projectManager.userId}" role="button">Cancel</a>
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

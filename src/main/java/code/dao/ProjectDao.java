@@ -12,7 +12,8 @@ public interface ProjectDao {
     Long create(Project project);
     Project read(Long id);
     void update(Project project);
-    void delete(Project project);
+    void delete(Long id);
     Project findProjectByName(String name);
     List<Project> findProjectsByManager(Employee manager);
+    List<Project> findAllProjects();
 }

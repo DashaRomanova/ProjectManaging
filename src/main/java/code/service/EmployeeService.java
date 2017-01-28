@@ -2,6 +2,8 @@ package code.service;
 
 import code.domain.Company;
 import code.domain.Employee;
+import code.domain.Qualification;
+import code.domain.Role;
 import code.exception.EntityAlreadyExistException;
 
 import java.util.List;
@@ -10,9 +12,13 @@ import java.util.List;
  * Created by Napha on 16.01.2017.
  */
 public interface EmployeeService {
-    Long createEmployee(String name, String surname, String login, String password, Long qualificationId, String role) throws EntityAlreadyExistException;
+    Long createEmployee(String name, String surname, String login, String password, Qualification qualification, Role role) throws EntityAlreadyExistException;
     Employee getEmployeeById(Long id);
     void updateEmployee (Employee employee);
+    void deleteEmployee (Long id);
 
     List<Employee> getAllEmployeesByCompanyId(Company company);
+    List<Employee> getAllEmployeesByQualificationAndRole(Qualification qualification, Role role);
+    List<Employee> getAllEmployeesByRole(Role role);
+    List<Employee> getAllEmployees();
 }

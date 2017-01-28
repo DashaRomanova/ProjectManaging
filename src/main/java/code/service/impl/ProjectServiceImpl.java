@@ -1,6 +1,7 @@
 package code.service.impl;
 
 import code.dao.ProjectDao;
+import code.domain.Customer;
 import code.domain.Employee;
 import code.domain.Project;
 import code.exception.EntityAlreadyExistException;
@@ -21,10 +22,10 @@ public class ProjectServiceImpl implements ProjectService{
     @Autowired(required = true)
     private ProjectDao projectDao;
 
-    public Long createProject(String projectName, Date projectStartDate, Date projectFinishDate) throws EntityAlreadyExistException{
+    public Long createProject(String projectName, Date projectStartDate, Date projectFinishDate, Customer customer, Employee manager) throws EntityAlreadyExistException {
         Project project = projectDao.findProjectByName(projectName);
         if(project != null) throw new EntityAlreadyExistException("Project with such name already exists!");
-        Long projectId = projectDao.create(new Project(projectName, projectStartDate, projectFinishDate));
+        Long projectId = projectDao.create(new Project(projectName, projectStartDate, projectFinishDate, customer, manager));
         return projectId;
     }
 
@@ -40,7 +41,15 @@ public class ProjectServiceImpl implements ProjectService{
         projectDao.update(project);
     }
 
+    public void deleteProject(Long id) {
+        projectDao.delete(id);
+    }
+
     public List<Project> getProjectsByManager(Employee manager) {
         return projectDao.findProjectsByManager(manager);
+    }
+
+    public List<Project> getAllProjects() {
+        return projectDao.findAllProjects();
     }
 }

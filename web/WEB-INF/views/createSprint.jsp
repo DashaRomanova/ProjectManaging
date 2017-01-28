@@ -23,52 +23,51 @@
   <div class="row">
     <h1>Create Sprint</h1>
   </div>
+  <div class="row">
+    <h4>Project: ${project.projectName}</h4>
+  </div>
   <form class="form-horizontal" action="/createSprint" method="POST">
     <div class="form-group has-feedback">
       <div class="col-md-2">
         <label class="control-label" for="name">Name:</label>
       </div>
       <div class="col-md-10">
+        <input type="hidden" id="projectId" name="projectId" value="${project.projectId}"/>
         <input type="text" class="form-control" id="name" name="name" required placeholder="Enter name">
         <span class="glyphicon form-control-feedback"></span>
       </div>
     </div>
-    <div class="form-group has-feedback">
-      <div class="col-md-2">
-        <label class="control-label" for="startDate">Start date:</label>
-      </div>
-      <div class="col-md-10">
-        <input type="date" class="form-control" id="startDate" name="startDate" required placeholder="Enter expected start date">
-        <span class="glyphicon form-control-feedback"></span>
-      </div>
+    <div class="form-group">
+    <div class="col-md-2">
+      <label for="sprint">Select previous sprint:</label>
+    </div>
+    <div class="col-md-10">
+      <select id="sprint" name="sprint" class="form-control">
+        <option value = "-1">None</option>
+        <c:if test= "${fn:length(listSprints) > 0}">
+          <c:forEach items="${listSprints}" var="sprint">
+            <option value = "${sprint.sprintId}">${sprint.sprintName}</option>
+          </c:forEach>
+        </c:if>
+      </select>
+    </div>
     </div>
     <div class="form-group has-feedback">
       <div class="col-md-2">
         <label class="control-label" for="finishDate">Finish date:</label>
       </div>
       <div class="col-md-10">
-        <input type="date" class="form-control" id="finishDate" name="finishDate" required placeholder="Enter expected finish date">
+        <input type="date" class="form-control" id="finishDate" name="finishDate" required placeholder="Enter finish date">
         <span class="glyphicon form-control-feedback"></span>
-      </div>
-    </div>
-    <div class="form-group">
-      <div class="col-md-2">
-        <label for="qualification">Select previous sprint:</label>
-      </div>
-      <div class="col-md-10">
-        <%--<select class="form-control" id="qualification" name="qualification">--%>
-          <%--<c:if test= "${fn:length(listQualifications) > 0}">--%>
-            <%--<c:forEach items="${listQualifications}" var="qualification">--%>
-              <%--<option value = "${qualification.qualificationId}">${qualification.qualificationName}</option>--%>
-            <%--</c:forEach>--%>
-          <%--</c:if>--%>
-        <%--</select>--%>
       </div>
     </div>
 
     <div class="form-group">
-      <div class="col-md-offset-2 col-sm-10">
+      <div class="col-md-offset-2 col-sm-1">
         <button type="submit" class="btn btn-lg btn-primary">Create</button>
+      </div>
+      <div class="col-sm-9">
+        <a class="btn btn-lg btn-primary" href="/showAllSprintsByProjectManagerIdPage?managerId=${project.projectManager.userId}" role="button">Cancel</a>
       </div>
     </div>
   </form>

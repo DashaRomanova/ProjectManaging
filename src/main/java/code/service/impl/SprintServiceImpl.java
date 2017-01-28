@@ -1,6 +1,7 @@
 package code.service.impl;
 
 import code.dao.SprintDao;
+import code.domain.Employee;
 import code.domain.Project;
 import code.domain.Sprint;
 import code.service.SprintService;
@@ -19,9 +20,14 @@ import java.util.List;
 public class SprintServiceImpl implements SprintService {
     @Autowired(required = true)
     private SprintDao sprintDao;
-    public Long createSprint(Sprint previousSprint, Date sprintStartDate, Date sprintFinishDate) {
-        Long sprintId = sprintDao.create(new Sprint(previousSprint, sprintStartDate, sprintFinishDate));
-        return sprintId;
+    public Long createSprint(String name, Project project, Sprint previousSprint, Date sprintFinishDate) {
+        Sprint sprint;
+        if(previousSprint == null){
+            sprint = new Sprint(name, project, previousSprint, project.getProjectStartDate(), sprintFinishDate);
+        } else {
+            sprint = new Sprint(name, project, previousSprint, previousSprint.getSprintFinishDate(), sprintFinishDate);
+        }
+        return sprintDao.create(sprint);
     }
 
     public Sprint getSprintById(Long id) {
@@ -32,7 +38,15 @@ public class SprintServiceImpl implements SprintService {
         return sprintDao.findSprintsByProject(project);
     }
 
+    public List<Sprint> getSprintsByProjectManager(Employee manager) {
+        return sprintDao.findSprintsByProjectManager(manager);
+    }
+
     public void updateSprint(Sprint sprint) {
         sprintDao.update(sprint);
+    }
+
+    public void deleteSprint(Long id) {
+        sprintDao.delete(id);
     }
 }

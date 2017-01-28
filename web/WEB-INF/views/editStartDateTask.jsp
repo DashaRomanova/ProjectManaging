@@ -18,20 +18,37 @@
 
   <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <script src="http://code.jquery.com/jquery-1.10.2.js" type="text/javascript"></script>
+
+  <script type="text/javascript">
+    //////////////////////////////////////////////////////////////////////////////////
+  </script>
 </head>
 <body>
 <div class="container">
   <div class="row">
     <h1>Edit Task</h1>
   </div>
-  <form class="form-horizontal" action="/editTask" method="POST">
+  <div class="row">
+    <h4>Sprint: ${sprint.sprintName}</h4>
+  </div>
+  <form class="form-horizontal" action="/addTaskToSprintEditPage" method="POST">
     <div class="form-group has-feedback">
       <div class="col-md-2">
         <label class="control-label" for="name">Name:</label>
       </div>
       <div class="col-md-10">
         <input type="hidden" id="taskId" name="taskId" value="${task.taskId}"/>
-        <input type="text" class="form-control" id="name" name="name" value="${task.taskName}" required placeholder="Enter name">
+        <input type="hidden" id="sprintId" name="sprintId" value="${sprint.sprintId}"/>
+        <input type="text" class="form-control" id="name" name="name" value="${task.taskName}" required readonly>
+        <span class="glyphicon form-control-feedback"></span>
+      </div>
+    </div>
+    <div class="form-group has-feedback">
+      <div class="col-md-2">
+        <label class="control-label" for="description">Task description:</label>
+      </div>
+      <div class="col-md-10">
+        <textarea class="form-control" id="description" rows="4" name="description" readonly>${task.taskDescription}</textarea>
         <span class="glyphicon form-control-feedback"></span>
       </div>
     </div>
@@ -46,19 +63,28 @@
     </div>
     <div class="form-group has-feedback">
       <div class="col-md-2">
-        <label class="control-label" for="description">Task description:</label>
+        <label class="control-label" for="startDate">Start date:</label>
       </div>
       <div class="col-md-10">
-        <textarea class="form-control" id="description" rows="4" name="description" placeholder="Enter task description">${task.taskDescription}</textarea>
+        <input type="date" class="form-control" id="startDate" name="startDate" value="${sprint.sprintStartDate}" required placeholder="Enter start date">
+        <span class="glyphicon form-control-feedback"></span>
+      </div>
+    </div>
+    <div class="form-group has-feedback">
+      <div class="col-md-2">
+        <label class="control-label" for="startDate">Finish date:</label>
+      </div>
+      <div class="col-md-10">
+        <input type="date" class="form-control" id="finishDate" name="finishDate" required readonly>
         <span class="glyphicon form-control-feedback"></span>
       </div>
     </div>
     <div class="form-group">
       <div class="col-md-offset-2 col-sm-1">
-        <button type="submit" class="btn btn-lg btn-primary">Edit</button>
+        <button type="submit" class="btn btn-lg btn-primary">Submit</button>
       </div>
       <div class="col-sm-9">
-        <a class="btn btn-lg btn-primary" href="/showAllTasksByProjectManagerIdPage?managerId=${task.project.projectManager.userId}" role="button">Cancel</a>
+        <a class="btn btn-lg btn-primary" href="/showAllSprintsByProjectManagerIdPage?managerId=${sprint.project.projectManager.userId}" role="button">Cancel</a>
       </div>
     </div>
   </form>

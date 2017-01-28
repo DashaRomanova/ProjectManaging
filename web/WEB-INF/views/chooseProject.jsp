@@ -14,7 +14,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Customers</title>
+  <title>Projects</title>
 
   <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -22,42 +22,32 @@
 <body>
 <div class="container">
   <div class="row">
-    <h1>Customers</h1>
+    <h1>Choose project</h1>
   </div>
   <table class="table table-hover">
     <thead>
     <tr>
       <th>#</th>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Projects</th>
+      <th>Name</th>
+      <th>Start date</th>
+      <th>Finish date</th>
+      <th>Customer</th>
     </tr>
     </thead>
     <tbody>
-    <c:if test= "${fn:length(listCustomers) > 0}">
-      <c:forEach items="${listCustomers}" var="customer" varStatus="loopStatus">
-        <tr>
+    <c:if test= "${fn:length(listProjects) > 0}">
+      <c:forEach items="${listProjects}" var="project" varStatus="loopStatus">
+        <tr onclick="location.href='/${reference}?projectId=${project.projectId}'">
           <td>${loopStatus.index+1}</td>
-          <td>${customer.name}</td>
-          <td>${customer.surname}</td>
-          <td>
-            <select class="form-control" path="customer.projects">
-              <c:if test= "${fn:length(customer.projects) > 0}">
-                <c:forEach items="${customer.projects}" var="project">
-                  <option value = "${project.projectId}">${project.projectName}</option>
-                </c:forEach>
-              </c:if>
-            </select>
-          </td>
-          <td><a class="btn btn-default" href="/editCustomerPage?customerId=${customer.userId}" role="button">Edit</a></td>
+          <td>${project.projectName}</td>
+          <td>${project.projectStartDate}</td>
+          <td>${project.projectFinishDate}</td>
+          <td>${project.customer.surname} ${project.customer.name}</td>
         </tr>
       </c:forEach>
     </c:if>
     </tbody>
   </table>
-  <div class="col-md-offset-1 col-sm-11">
-    <a class="btn btn-primary" href="/createCustomerPage" role="button">Add new customer</a></td>
-  </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="/bootstrap/js/bootstrap.min.js"></script>

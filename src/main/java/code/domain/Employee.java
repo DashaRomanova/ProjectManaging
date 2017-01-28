@@ -14,26 +14,24 @@ import java.util.List;
 @Entity
 @Table(name = "Employee")
 public class Employee extends User{
-    @ManyToOne()
-    @JoinColumn(name="Qualification_id")
-    private Qualification qualification;
+    @Column(name = "Qualification", nullable = false)
+    private String qualification;
 
-    @OneToMany(mappedBy = "projectManager", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "projectManager", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Project> projects;
 
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Task> tasks;
 
     @ManyToOne()
     private Company company;
 
-
-    public Employee(String name, String surname, String login, String password, Qualification qualification, String role) {
+    public Employee(String name, String surname, String login, String password, Qualification qualification, Role role) {
         super(name, surname, login, password, role);
-        this.qualification = qualification;
+        this.qualification = qualification.name();
     }
 
     public Employee() {
@@ -52,7 +50,7 @@ public class Employee extends User{
     }
 
     public Qualification getQualification() {
-        return qualification;
+        return Qualification.valueOf(qualification);
     }
 
     public List<Task> getTasks() {
@@ -60,7 +58,7 @@ public class Employee extends User{
     }
 
     public void setQualification(Qualification qualification) {
-        this.qualification = qualification;
+        this.qualification = qualification.name();
     }
 
     public List<Project> getProjects() {

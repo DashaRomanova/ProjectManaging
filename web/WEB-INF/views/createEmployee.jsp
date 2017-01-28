@@ -81,7 +81,7 @@
             <select class="form-control" id="qualification" name="qualification">
               <c:if test= "${fn:length(listQualifications) > 0}">
                 <c:forEach items="${listQualifications}" var="qualification">
-                  <option value = "${qualification.qualificationId}">${qualification.qualificationName}</option>
+                  <option value = "${qualification}">${qualification}</option>
                 </c:forEach>
               </c:if>
             </select>
@@ -89,8 +89,11 @@
         </div>
 
         <div class="form-group">
-          <div class="col-md-offset-2 col-sm-10">
+          <div class="col-md-offset-2 col-sm-1">
             <button type="submit" class="btn btn-lg btn-primary">Create</button>
+          </div>
+          <div class="col-sm-9">
+            <a class="btn btn-lg btn-primary" href="/showAllEmployeesPage" role="button">Cancel</a>
           </div>
         </div>
     </form>

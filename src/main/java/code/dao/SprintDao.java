@@ -1,5 +1,6 @@
 package code.dao;
 
+import code.domain.Employee;
 import code.domain.Project;
 import code.domain.Sprint;
 
@@ -12,6 +13,7 @@ public interface SprintDao {
     Long create(Sprint sprint);
     Sprint read(Long id);
     void update(Sprint sprint);
-    void delete(Sprint sprint);
+    void delete(Long id);
     List<Sprint> findSprintsByProject(Project project);
+    List<Sprint> findSprintsByProjectManager(Employee manager);
 }

@@ -1,5 +1,8 @@
 package code.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,7 +20,7 @@ public class Sprint {
     @Column(name = "Sprint_id")
     private Long sprintId;
     @Column(name = "Name", unique = true, nullable = false)
-    private Long sprintName;
+    private String sprintName;
 
     @OneToOne()
     @JoinColumn(name="Previous_sprint", referencedColumnName = "Sprint_id", nullable = true)
@@ -26,7 +29,8 @@ public class Sprint {
     @OneToOne(mappedBy="previousSprint")
     private Sprint parentSprint;
 
-    @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "sprint", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Task> tasks;
 
     @ManyToOne()
@@ -43,11 +47,14 @@ public class Sprint {
     public Sprint() {
     }
 
-    public Sprint(Long sprintName, Date sprintStartDate, Date sprintFinishDate) {
+    public Sprint(String sprintName, Project project, Sprint previousSprint, Date sprintStartDate, Date sprintFinishDate) {
         this.sprintName = sprintName;
+        this.project = project;
+        this.previousSprint = previousSprint;
         this.sprintStartDate = sprintStartDate;
         this.sprintFinishDate = sprintFinishDate;
     }
+
 
     public Long getSprintId() {
         return sprintId;
@@ -79,11 +86,11 @@ public class Sprint {
         tasks.add(task);
     }
 
-    public Long getSprintName() {
+    public String getSprintName() {
         return sprintName;
     }
 
-    public void setSprintName(Long sprintName) {
+    public void setSprintName(String sprintName) {
         this.sprintName = sprintName;
     }
 
