@@ -229,7 +229,7 @@ public class SprintController {
                             log.warn(errorMassage);
                             return "errorPage";
                         } else{
-                            ViewEmployee employee = employeeService.findEmployeeIfHasOvertime(sprint, task.getEmployee().getUserId());
+                            ViewEmployees employee = employeeService.findEmployeeIfHasOvertime(sprint, task.getEmployee().getUserId());
                             if(employee != null){
                                 String question = "Employee " + employee.getSurname() + " " + employee.getName() + " has overtime " + employee.getOvertime() + " hour(s). Would you like to add this task anyway?";
                                 String referenceYes = "/projectManager/addTaskToSprintRedirect?taskId=" + influencingTask.getTaskId() + "&Id=" + sprint.getSprintId();

@@ -1,33 +1,19 @@
 package code.controller;
 
-import code.dao.EmployeeDao;
-import code.dao.TaskDao;
 import code.domain.Employee;
-import code.domain.User;
-import code.domain.ViewEmployee;
 import code.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.sql.SQLDataException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Napha on 28.01.2017.
@@ -175,7 +161,7 @@ public class LoginController {
 //        }
 //
 //        List l = taskDao.getTaskStatisticBetweenDatesByEmployee(new Long(1), start, end);
-//            //ViewEmployee viewEmployee = employeeDao.findIfEmployeeHasOvertime(5, new Long(2), new Long(1));
+//            //ViewEmployees viewEmployee = employeeDao.findIfEmployeeHasOvertime(5, new Long(2), new Long(1));
 //
 //        return "main_page";
 //

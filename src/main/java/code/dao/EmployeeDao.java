@@ -21,8 +21,8 @@ public interface EmployeeDao {
     List<Employee> getAllEmployees();
 
     //List<Employee> getAllEmployeesByProjectManager(Employee manager);
-    List<ViewEmployee> getAllEmployeesByProjectManager(Long managerId);
+    List<ViewEmployees> getAllEmployeesByProjectManager(Long managerId);
 
-    List<ViewEmployee> findEmployeesWhoHasOvertime(Integer sprintDuration, Long sprintId);
-    ViewEmployee findEmployeeIfHasOvertime(Integer sprintDuration, Long sprintId, Long employeeId);
+    List<ViewEmployees> findEmployeesWhoHasOvertime(Integer sprintDuration, Long sprintId);
+    ViewEmployees findEmployeeIfHasOvertime(Integer sprintDuration, Long sprintId, Long employeeId);
 }

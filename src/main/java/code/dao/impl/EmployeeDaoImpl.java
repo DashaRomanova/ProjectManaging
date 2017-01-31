@@ -98,7 +98,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 //        return l;
 //    }
 
-    public List<ViewEmployee> getAllEmployeesByProjectManager(Long managerId) {
+    public List<ViewEmployees> getAllEmployeesByProjectManager(Long managerId) {
         Session session = factory.getCurrentSession();
 
         NativeQuery query = session.createNativeQuery(
@@ -118,7 +118,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
         return query.list();
     }
 
-    public List<ViewEmployee> findEmployeesWhoHasOvertime(Integer sprintDuration, Long sprintId) {
+    public List<ViewEmployees> findEmployeesWhoHasOvertime(Integer sprintDuration, Long sprintId) {
         Session session = factory.getCurrentSession();
 
 
@@ -138,7 +138,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
         return query.list();
     }
 
-    public ViewEmployee findEmployeeIfHasOvertime(Integer sprintDuration, Long sprintId, Long employeeId){
+    public ViewEmployees findEmployeeIfHasOvertime(Integer sprintDuration, Long sprintId, Long employeeId){
         Session session = factory.getCurrentSession();
 
         NativeQuery query = session.createNativeQuery(
@@ -156,6 +156,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
         query.setParameter("sprintId", sprintId);
         query.setParameter("employeeId", employeeId);
 
-        return (ViewEmployee)query.getSingleResult();
+        return (ViewEmployees)query.getSingleResult();
     }
 }

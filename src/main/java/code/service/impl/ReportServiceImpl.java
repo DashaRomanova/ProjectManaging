@@ -78,7 +78,7 @@ public class ReportServiceImpl implements ReportService {
         return taskDao.findTasksWithDelayByEmployee(employee);
     }
 
-    public List<ViewEmployee> findEmployeesWhoHasOvertime(Sprint sprint) {
+    public List<ViewEmployees> findEmployeesWhoHasOvertime(Sprint sprint) {
         int workingHours = DateWorkerService.getWorkingHoursBetweenTwoDates(sprint.getSprintStartDate(), sprint.getSprintFinishDate());
         return employeeDao.findEmployeesWhoHasOvertime(workingHours, sprint.getSprintId());
     }

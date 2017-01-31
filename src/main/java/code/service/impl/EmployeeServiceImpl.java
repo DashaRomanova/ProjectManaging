@@ -43,7 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeDao.findEmployeeByLogin(login);
     }
 
-    public ViewEmployee findEmployeeIfHasOvertime(Sprint sprint, Long employeeId){
+    public ViewEmployees findEmployeeIfHasOvertime(Sprint sprint, Long employeeId){
         int workingHours = DateWorkerService.getWorkingHoursBetweenTwoDates(sprint.getSprintStartDate(), sprint.getSprintFinishDate());
         return employeeDao.findEmployeeIfHasOvertime(workingHours, sprint.getSprintId(), employeeId);
     }
@@ -64,7 +64,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeDao.getAllEmployees();
     }
 
-    public List<ViewEmployee> getAllEmployeesByProjectManager(Long managerId) {
+    public List<ViewEmployees> getAllEmployeesByProjectManager(Long managerId) {
         return employeeDao.getAllEmployeesByProjectManager(managerId);
     }
 

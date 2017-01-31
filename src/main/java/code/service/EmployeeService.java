@@ -16,11 +16,11 @@ public interface EmployeeService {
 
     Employee findEmployeeByLogin(String login);
 
-    ViewEmployee findEmployeeIfHasOvertime(Sprint sprint, Long employeeId);
+    ViewEmployees findEmployeeIfHasOvertime(Sprint sprint, Long employeeId);
     List<Employee> getAllEmployeesByQualificationAndRole(Qualification qualification, Role role);
     List<Employee> getAllEmployeesByRole(Role role);
     List<Employee> getAllEmployees();
 
     //List<Employee> getAllEmployeesByProjectManager(Employee manager);
-    List<ViewEmployee> getAllEmployeesByProjectManager(Long managerId);
+    List<ViewEmployees> getAllEmployeesByProjectManager(Long managerId);
 }

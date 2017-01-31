@@ -17,7 +17,7 @@ import java.util.List;
         @SqlResultSetMapping(
                 name = "EmployeeMapping",
                 classes = @ConstructorResult(
-                        targetClass = ViewEmployee.class,
+                        targetClass = ViewEmployees.class,
                         columns = {
                                 @ColumnResult(name = "USER_ID", type = Long.class),
                                 @ColumnResult(name = "SURNAME"),
@@ -26,7 +26,7 @@ import java.util.List;
         @SqlResultSetMapping(
                 name = "EmployeeMapping2",
                 classes = @ConstructorResult(
-                        targetClass = ViewEmployee.class,
+                        targetClass = ViewEmployees.class,
                         columns = {
                                 @ColumnResult(name = "USER_ID", type = Long.class),
                                 @ColumnResult(name = "SURNAME"),
