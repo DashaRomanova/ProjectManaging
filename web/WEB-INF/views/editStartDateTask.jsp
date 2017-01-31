@@ -20,7 +20,23 @@
   <script src="http://code.jquery.com/jquery-1.10.2.js" type="text/javascript"></script>
 
   <script type="text/javascript">
-    //////////////////////////////////////////////////////////////////////////////////
+    function validationFinishDate() {
+      var estimate = ${task.estimate};
+      var estInDay = Math.ceil(estimate/8);
+      var start = Date.parse(${task.startDate});
+      var finish = new Date();
+
+      for (var i = 0; i < estInDay; i++) {
+        finish.setTime(start.getTime() + 86400000);
+        if(finish.getDay == 0 || finish.getDay == 6){
+          finish.setTime(start.getTime() + 86400000);
+        }
+      }
+      var finishSprint = Date.parse(${sprint.sprintFinishDate});
+      if(finish > finishSprint){
+        document.getElementById('finishDateError').innerHTML = 'Finish date of task is out of sprint bounds!';
+      }
+    }
   </script>
 </head>
 <body>
@@ -31,12 +47,13 @@
   <div class="row">
     <h4>Sprint: ${sprint.sprintName}</h4>
   </div>
-  <form class="form-horizontal" action="/addTaskToSprintEditPage" method="POST">
+  <form class="form-horizontal" action="/projectManager/addTaskToSprintEditPage" method="POST">
     <div class="form-group has-feedback">
       <div class="col-md-2">
         <label class="control-label" for="name">Name:</label>
       </div>
       <div class="col-md-10">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="hidden" id="taskId" name="taskId" value="${task.taskId}"/>
         <input type="hidden" id="sprintId" name="sprintId" value="${sprint.sprintId}"/>
         <input type="text" class="form-control" id="name" name="name" value="${task.taskName}" required readonly>
@@ -66,13 +83,13 @@
         <label class="control-label" for="startDate">Start date:</label>
       </div>
       <div class="col-md-10">
-        <input type="date" class="form-control" id="startDate" name="startDate" value="${sprint.sprintStartDate}" required placeholder="Enter start date">
+        <input type="date" class="form-control" id="startDate" name="startDate" value="${sprint.sprintStartDate}" onchange="validationFinishDate()" required placeholder="Enter start date">
         <span class="glyphicon form-control-feedback"></span>
       </div>
     </div>
     <div class="form-group has-feedback">
       <div class="col-md-2">
-        <label class="control-label" for="startDate">Finish date:</label>
+        <label class="control-label" for="finishDate">Finish date:</label>
       </div>
       <div class="col-md-10">
         <input type="date" class="form-control" id="finishDate" name="finishDate" required readonly>
@@ -84,7 +101,7 @@
         <button type="submit" class="btn btn-lg btn-primary">Submit</button>
       </div>
       <div class="col-sm-9">
-        <a class="btn btn-lg btn-primary" href="/showAllSprintsByProjectManagerIdPage?managerId=${sprint.project.projectManager.userId}" role="button">Cancel</a>
+        <a class="btn btn-lg btn-primary" href="/projectManager/showAllSprintsByProjectManagerIdPage?managerId=${sprint.project.projectManager.userId}" role="button">Cancel</a>
       </div>
     </div>
   </form>

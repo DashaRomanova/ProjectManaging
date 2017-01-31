@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "Project")
 public class Project {
     @Id
-    @SequenceGenerator(name = "sequence", sequenceName = "Project_SEQ", allocationSize = 1, initialValue = 1)
+    @SequenceGenerator(name = "sequence", sequenceName = "Project_SEQ", allocationSize = 100, initialValue = 10)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")
     @Column(name = "Project_id")
     private Long projectId;

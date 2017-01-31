@@ -14,7 +14,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Dashboard for administrator</title>
+  <title>Dashboard for Project Manager</title>
 
   <!-- Bootstrap core CSS -->
   <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -38,14 +38,17 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Settings</a></li>
-        <li><a href="#">Profile</a></li>
-        <li><a href="#">Help</a></li>
+        <c:url value="/j_spring_security_logout" var="logoutUrl" />
+        <form action="${logoutUrl}" method="post" id="logoutForm">
+          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        </form>
+        <script>
+          function formSubmit() {
+            document.getElementById("logoutForm").submit();
+          }
+        </script>
+        <li><a href="javascript:formSubmit()">Logout</a></li>
       </ul>
-      <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" placeholder="Search...">
-      </form>
     </div>
   </div>
 </div>
@@ -54,23 +57,27 @@
   <div class="row">
     <div class="col-sm-3 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
-        <li><a href="/showAllTasksByProjectManagerIdPage?managerId=${manager.userId}">Task</a></li>
-        <li class="active"><a href="/showAllSprintsByProjectManagerIdPage?managerId=${manager.userId}">Sprint</a></li>
-        <li><a href="/showAllRequestsByProjectManagerIdPage?managerId=${manager.userId}">Requests from Employees</a></li>
+        <li><a href="/projectManager/showAllTasksByProjectManagerIdPage?managerId=${manager.userId}">Task</a></li>
+        <li class="active"><a href="/projectManager/showAllSprintsByProjectManagerIdPage?managerId=${manager.userId}">Sprint</a></li>
+        <li><a href="/projectManager/showAllRequestsByProjectManagerIdPage?managerId=${manager.userId}">Requests from Employees</a></li>
       </ul>
       <ul class="nav nav-sidebar">
-        <li><a href="#">Overview</a></li>
-        <li><a href="#">Reports</a></li>
-        <li><a href="#">Analytics</a></li>
-        <li><a href="#">Export</a></li>
+        <li>Reports
+          <ul class="nav nav-sidebar">
+            <li><a href="/projectManager/chooseProjectForOvertimeReportPage?managerId=${manager.userId}">Overtime</a></li>
+            <li><a href="/projectManager/chooseProjectForReportPage?managerId=${manager.userId}">Statistic of project, sprints and tasks</a></li>
+            <li><a href="/projectManager/chooseEmployeeForReportPage?managerId=${manager.userId}">Employee work statistic</a></li>
+            <li><a href="/projectManager/chooseEmployeeForTaskReportPage?managerId=${manager.userId}">Employee statistic of time deviation from predicted by tasks</a></li>
+          </ul>
+        </li>
       </ul>
     </div>
     <div class="col-sm-9 col-sm-offset-2 col-md-10 col-md-offset-2 main">
-      <h1 class="page-header">Task</h1>
+      <h1 class="page-header">Sprint</h1>
 
       <div class="row placeholders">
         <div class="col-xs-6 col-sm-3 placeholder">
-          <a class="btn btn-primary" href="/chooseProjectPage?managerId=${manager.userId}&entityName=Sprint" role="button">Add new Sprint</a></td>
+          <a class="btn btn-primary" href="/projectManager/chooseProjectPage?managerId=${manager.userId}&entityName=Sprint" role="button">Add new Sprint</a></td>
         </div>
       </div>
 
@@ -85,7 +92,6 @@
             <th>Start date</th>
             <th>Finish date</th>
             <th>Tasks</th>
-            <th>Edit</th>
             <th>Delete</th>
           </tr>
           </thead>
@@ -107,10 +113,10 @@
                       </c:forEach>
                     </c:if>
                   </select>
-                  <a class="btn btn-default" href="/chooseTask?Id=${sprint.sprintId}&entityName=Sprint" role="button">Add</a>
+                  <a class="btn btn-default" href="/projectManager/chooseTask?Id=${sprint.sprintId}&entityName=Sprint" role="button">Add</a>
                 </td>
-                <td><a class="btn btn-default" href="/editSprintPage?sprintId=${sprint.sprintId}" role="button">Edit</a></td>
-                <td><a class="btn btn-default" href="/deleteSprintPage?sprintId=${sprint.sprintId}" role="button">Delete</a></td>
+                <td><a class="btn btn-default" href="/projectManager/editSprintPage?sprintId=${sprint.sprintId}" role="button">Edit</a></td>
+                <td><a class="btn btn-default" href="/projectManager/deleteSprintPage?sprintId=${sprint.sprintId}" role="button">Delete</a></td>
               </tr>
             </c:forEach>
           </c:if>

@@ -1,5 +1,6 @@
 package code.controller;
 
+import code.dao.CompanyDao;
 import code.domain.Customer;
 import code.domain.Role;
 import code.exception.EntityAlreadyExistException;
@@ -23,30 +24,32 @@ public class CustomerController {
     @Autowired(required = true)
     private CustomerService customerService;
 
+    @Autowired(required = true)
+    private CompanyDao companyDao;
 
     public CustomerController() {
     }
 
-    @RequestMapping(value = "/createCustomerPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/admin/createCustomerPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String createCustomerPage(Model model) {
         log.info("/createCustomerPage code.controller.CustomerController");
         return "createCustomer";
     }
 
-    @RequestMapping(value = "/createCustomer", method = {RequestMethod.POST})
+    @RequestMapping(value = "/admin/createCustomer", method = {RequestMethod.POST})
     public String createCustomer(@RequestParam("name") String name,
                                  @RequestParam("surname") String surname,
                                  @RequestParam("login") String login,
                                  @RequestParam("password") String password,
                                  Model model) throws EntityAlreadyExistException {
         log.info("/createCustomer code.controller.CustomerController");
-        customerService.createCustomer(name, surname, login, password, Role.Customer);
+        customerService.createCustomer(name, surname, login, password, Role.ROLE_CUSTOMER);
 
         model.addAttribute("listCustomers", customerService.getAllCustomers());
         return "adminDashboardCustomer";
     }
 
-    @RequestMapping(value = "/chooseCustomerForProjectPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/admin/chooseCustomerForProjectPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String chooseCustomerForProjectPage(Model model) {
         log.info("/chooseCustomerForProjectPage code.controller.ProjectController");
         model.addAttribute("listCustomers", customerService.getAllCustomers());
@@ -61,7 +64,7 @@ public class CustomerController {
 //        return "showCustomers";
 //    }
 
-    @RequestMapping(value = "/showAllCustomersPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/admin/showAllCustomersPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllCustomersPage(Model model) {
         log.info("/showAllCustomersPage code.controller.CustomerController");
 
@@ -69,7 +72,7 @@ public class CustomerController {
         return "adminDashboardCustomer";
     }
 
-    @RequestMapping(value = "/deleteCustomerPage", method = {RequestMethod.GET})
+    @RequestMapping(value = "/admin/deleteCustomerPage", method = {RequestMethod.GET})
     public String deleteCustomerPage(@RequestParam("customerId") Long customerId, Model model) {
         log.info("/deleteCustomerPage code.controller.CustomerController");
         customerService.deleteCustomer(customerId);
@@ -77,7 +80,7 @@ public class CustomerController {
         return "adminDashboardCustomer";
     }
 
-    @RequestMapping(value = "/editCustomerPage", method = {RequestMethod.GET})
+    @RequestMapping(value = "/admin/editCustomerPage", method = {RequestMethod.GET})
     public String editCustomerPage(@RequestParam("customerId") Long customerId,
                                    Model model) {
         log.info("/editCustomerPage code.controller.CustomerController");
@@ -85,7 +88,7 @@ public class CustomerController {
         return "editCustomer";
     }
 
-    @RequestMapping(value = "/editCustomer", method = {RequestMethod.POST})
+    @RequestMapping(value = "/admin/editCustomer", method = {RequestMethod.POST})
     public String editCustomer(@RequestParam("customerId") Long customerId,
                                @RequestParam("name") String name,
                                @RequestParam("surname") String surname,
@@ -97,7 +100,7 @@ public class CustomerController {
         Customer customer = customerService.getCustomerById(customerId);
         customer.setName(name);
         customer.setSurname(surname);
-        customer.setLogin(login);
+        customer.setUsername(login);
         customer.setPassword(password);
 
         customerService.updateCustomer(customer);

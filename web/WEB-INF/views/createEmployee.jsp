@@ -23,12 +23,13 @@
       <div class="row">
         <h1>Create Employee</h1>
       </div>
-      <form class="form-horizontal" action="/createEmployee" method="POST">
+      <form class="form-horizontal" action="/admin/createEmployee" method="POST">
         <div class="form-group has-feedback">
           <div class="col-md-2">
             <label class="control-label" for="login">Login:</label>
           </div>
           <div class="col-md-10">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <input type="text" class="form-control" id="login" name="login" required placeholder="Enter login">
             <span class="glyphicon form-control-feedback"></span>
           </div>
@@ -93,7 +94,7 @@
             <button type="submit" class="btn btn-lg btn-primary">Create</button>
           </div>
           <div class="col-sm-9">
-            <a class="btn btn-lg btn-primary" href="/showAllEmployeesPage" role="button">Cancel</a>
+            <a class="btn btn-lg btn-primary" href="/admin/showAllEmployeesPage" role="button">Cancel</a>
           </div>
         </div>
     </form>

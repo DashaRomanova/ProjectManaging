@@ -38,14 +38,18 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Settings</a></li>
-        <li><a href="#">Profile</a></li>
-        <li><a href="#">Help</a></li>
+        <c:url value="/j_spring_security_logout" var="logoutUrl" />
+        <form action="${logoutUrl}" method="post" id="logoutForm">
+          <input type="hidden" name="${_csrf.parameterName}"
+                 value="${_csrf.token}" />
+        </form>
+        <script>
+          function formSubmit() {
+            document.getElementById("logoutForm").submit();
+          }
+        </script>
+        <li><a href="javascript:formSubmit()">Logout</a></li>
       </ul>
-      <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" placeholder="Search...">
-      </form>
     </div>
   </div>
 </div>
@@ -54,15 +58,9 @@
   <div class="row">
     <div class="col-sm-3 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
-        <li class="active"><a href="/showAllProjectsPage">Project</a></li>
-        <li><a href="/showAllEmployeesPage">Employee</a></li>
-        <li><a href="/showAllCustomersPage">Customer</a></li>
-      </ul>
-      <ul class="nav nav-sidebar">
-        <li><a href="#">Overview</a></li>
-        <li><a href="#">Reports</a></li>
-        <li><a href="#">Analytics</a></li>
-        <li><a href="#">Export</a></li>
+        <li class="active"><a href="/admin/showAllProjectsPage">Project</a></li>
+        <li><a href="/admin/showAllEmployeesPage">Employee</a></li>
+        <li><a href="/admin/showAllCustomersPage">Customer</a></li>
       </ul>
     </div>
     <div class="col-sm-9 col-sm-offset-2 col-md-10 col-md-offset-2 main">
@@ -70,7 +68,7 @@
 
       <div class="row placeholders">
         <div class="col-xs-6 col-sm-3 placeholder">
-          <a class="btn btn-primary" href="/chooseCustomerForProjectPage" role="button">Create new project</a></td>
+          <a class="btn btn-primary" href="/admin/chooseCustomerForProjectPage" role="button">Create new project</a></td>
         </div>
       </div>
 
@@ -103,13 +101,13 @@
                   <select class="form-control" path="project.sprints">
                     <c:if test= "${fn:length(project.sprints) > 0}">
                       <c:forEach items="${project.sprints}" var="sprint">
-                        <option value = "${sprint.sprintId}">${sprint.sprintId}</option>
+                        <option value = "${sprint.sprintId}">${sprint.sprintName}</option>
                       </c:forEach>
                     </c:if>
                   </select>
                 </td>
-                <td><a class="btn btn-default" href="/editProjectPage?projectId=${project.projectId}" role="button">Edit</a></td>
-                <td><a class="btn btn-default" href="/deleteProjectPage?projectId=${project.projectId}" role="button">Delete</a></td>
+                <td><a class="btn btn-default" href="/admin/editProjectPage?projectId=${project.projectId}" role="button">Edit</a></td>
+                <td><a class="btn btn-default" href="/admin/deleteProjectPage?projectId=${project.projectId}" role="button">Delete</a></td>
               </tr>
             </c:forEach>
           </c:if>

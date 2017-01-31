@@ -1,9 +1,6 @@
 package code.service;
 
-import code.domain.Company;
-import code.domain.Employee;
-import code.domain.Qualification;
-import code.domain.Role;
+import code.domain.*;
 import code.exception.EntityAlreadyExistException;
 
 import java.util.List;
@@ -17,8 +14,13 @@ public interface EmployeeService {
     void updateEmployee (Employee employee);
     void deleteEmployee (Long id);
 
-    List<Employee> getAllEmployeesByCompanyId(Company company);
+    Employee findEmployeeByLogin(String login);
+
+    ViewEmployee findEmployeeIfHasOvertime(Sprint sprint, Long employeeId);
     List<Employee> getAllEmployeesByQualificationAndRole(Qualification qualification, Role role);
     List<Employee> getAllEmployeesByRole(Role role);
     List<Employee> getAllEmployees();
+
+    //List<Employee> getAllEmployeesByProjectManager(Employee manager);
+    List<ViewEmployee> getAllEmployeesByProjectManager(Long managerId);
 }

@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Napha
@@ -21,12 +22,13 @@
   <div class="row">
     <h1>Create Customer</h1>
   </div>
-  <form class="form-horizontal" action="/createCustomer" method="POST">
+  <form class="form-horizontal" action="/admin/createCustomer" method="POST">
     <div class="form-group has-feedback">
       <div class="col-md-2">
         <label class="control-label" for="login">Login:</label>
       </div>
       <div class="col-md-10">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="text" class="form-control" id="login" name="login" required placeholder="Enter login">
         <span class="glyphicon form-control-feedback"></span>
       </div>
@@ -62,7 +64,7 @@
         <button type="submit" class="btn btn-lg btn-primary">Create</button>
       </div>
       <div class="col-sm-9">
-        <a class="btn btn-lg btn-primary" href="/showAllCustomersPage" role="button">Cancel</a>
+        <a class="btn btn-lg btn-primary" href="/admin/showAllCustomersPage" role="button">Cancel</a>
       </div>
     </div>
   </form>

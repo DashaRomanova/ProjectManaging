@@ -22,15 +22,15 @@
 <body>
 <div class="container">
   <div class="row">
-    <h1>Influencing task <${task.taskName}> is not added to any Sprints. Would you like to add this Task to this Sprint?</h1>
+    <h1>${question}</h1>
   </div>
 
   <div class="form-group">
     <div class="col-md-offset-2 col-sm-1">
-      <a class="btn btn-lg btn-primary" href="/addTaskToSprint?taskId=${task.taskId}&Id=${sprint.sprintId}" role="button">Yes</a>
+      <a class="btn btn-lg btn-primary" href="${referenceYes}" role="button">Yes</a>
     </div>
     <div class="col-sm-9">
-      <a class="btn btn-lg btn-primary" href="/showAllSprintsByProjectManagerIdPage?managerId=${sprint.project.projectManager.userId}" role="button">No</a>
+      <a class="btn btn-lg btn-primary" href="${referenceNo}" role="button">No</a>
     </div>
   </div>
 </div>

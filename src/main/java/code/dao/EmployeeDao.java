@@ -1,9 +1,6 @@
 package code.dao;
 
-import code.domain.Company;
-import code.domain.Employee;
-import code.domain.Qualification;
-import code.domain.Role;
+import code.domain.*;
 
 import java.util.List;
 
@@ -22,4 +19,10 @@ public interface EmployeeDao {
     List<Employee> getAllEmployeesByQualificationAndRole(Qualification qualification, Role role);
     List<Employee> getAllEmployeesByRole(Role role);
     List<Employee> getAllEmployees();
+
+    //List<Employee> getAllEmployeesByProjectManager(Employee manager);
+    List<ViewEmployee> getAllEmployeesByProjectManager(Long managerId);
+
+    List<ViewEmployee> findEmployeesWhoHasOvertime(Integer sprintDuration, Long sprintId);
+    ViewEmployee findEmployeeIfHasOvertime(Integer sprintDuration, Long sprintId, Long employeeId);
 }

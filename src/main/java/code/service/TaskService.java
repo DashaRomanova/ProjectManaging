@@ -15,14 +15,13 @@ public interface TaskService {
     List<Task> getTasksByProjectWhereSprintIsNull(Project project);
     List<Task> getTasksByProjectManagerWhereStatusIsChangeRequest(Employee projectManager);
     List<Task>  getTasksByProjectManager(Employee manager);
-
+    List<Task> getAnotherTasksByProject(Project project, Long taskId);
     List<Task> getTasksByEmployeeWhereStatusIsCompleted(Employee employee);//Status = Completed
     List<Task> getTasksByEmployeeWhereStatusIsInProgress(Employee employee);//Status = InProgress
     List<Task> getTasksByEmployeeWhichIsInSprint(Employee employee);//Status = Confirmed, sprint != null
     List<Task> getTasksByEmployeeWhereStatusIsAssigned(Employee employee);//Status = Assigned, requestedEstimate = null
     List<Task> getTasksByEmployeeWhichRefused(Employee employee);//Status = Assigned, requestedEstimate != null
     List<Task> getTasksByEmployeeWhereStatusIsChangeRequest(Employee employee);//Status = ChangeRequest, requestedEstimate != null
-
 
     Task getTaskById(Long id);
     void updateTask (Task task);

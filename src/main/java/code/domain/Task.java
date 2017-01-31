@@ -10,9 +10,17 @@ import java.util.List;
  */
 @Entity
 @Table(name = "Task")
+@SqlResultSetMapping(
+        name = "TaskMapping",
+        classes = @ConstructorResult(
+                targetClass = TaskReportView.class,
+                columns = {
+                        @ColumnResult(name = "Task_Name"),
+                        @ColumnResult(name = "Project_Name"),
+                        @ColumnResult(name = "Sprint_Name")}))
 public class Task{
     @Id
-    @SequenceGenerator(name = "sequence", sequenceName = "Task_SEQ", allocationSize = 1, initialValue = 1)
+    @SequenceGenerator(name = "sequence", sequenceName = "Task_SEQ", allocationSize = 100, initialValue = 10)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")
     @Column(name = "Task_id")
     private Long taskId;
@@ -22,6 +30,8 @@ public class Task{
     private String taskDescription;
     @Column(name = "Estimate", nullable = false)
     private Integer estimate;
+    @Column(name = "Actual_estimate")
+    private Integer actualEstimate;
     @Column(name = "Requested_estimate")
     private Integer requestedEstimate;
     @Temporal(TemporalType.DATE)
@@ -200,5 +210,13 @@ public class Task{
 
     public void setRequestedEstimate(Integer requestedEstimate) {
         this.requestedEstimate = requestedEstimate;
+    }
+
+    public Integer getActualEstimate() {
+        return actualEstimate;
+    }
+
+    public void setActualEstimate(Integer actualEstimate) {
+        this.actualEstimate = actualEstimate;
     }
 }

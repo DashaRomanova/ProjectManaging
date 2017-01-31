@@ -13,6 +13,26 @@ import java.util.List;
 
 @Entity
 @Table(name = "Employee")
+@SqlResultSetMappings({
+        @SqlResultSetMapping(
+                name = "EmployeeMapping",
+                classes = @ConstructorResult(
+                        targetClass = ViewEmployee.class,
+                        columns = {
+                                @ColumnResult(name = "USER_ID", type = Long.class),
+                                @ColumnResult(name = "SURNAME"),
+                                @ColumnResult(name = "NAME"),
+                                @ColumnResult(name = "overtime", type = Integer.class)})),
+        @SqlResultSetMapping(
+                name = "EmployeeMapping2",
+                classes = @ConstructorResult(
+                        targetClass = ViewEmployee.class,
+                        columns = {
+                                @ColumnResult(name = "USER_ID", type = Long.class),
+                                @ColumnResult(name = "SURNAME"),
+                                @ColumnResult(name = "NAME")}))
+})
+
 public class Employee extends User{
     @Column(name = "Qualification", nullable = false)
     private String qualification;
@@ -25,9 +45,6 @@ public class Employee extends User{
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Task> tasks;
-
-    @ManyToOne()
-    private Company company;
 
     public Employee(String name, String surname, String login, String password, Qualification qualification, Role role) {
         super(name, surname, login, password, role);
@@ -74,5 +91,11 @@ public class Employee extends User{
             projects = new ArrayList<Project>();
         }
         projects.add(project);
+    }
+
+    public void removeProject(Project project) {
+        if(projects != null){
+            projects.remove(project);
+        }
     }
 }

@@ -2,7 +2,6 @@ package code.controller;
 
 import code.domain.*;
 import code.exception.EntityAlreadyExistException;
-import code.exception.TaskAlreadyCompletedException;
 import code.service.EmployeeService;
 import code.service.ProjectService;
 import code.service.SprintService;
@@ -16,10 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Napha on 16.01.2017.
@@ -27,7 +25,6 @@ import java.util.Date;
 @Controller
 @SessionAttributes("TaskController")
 public class TaskController {
-    private static final String DATE_PATTERN = "yyyy-mm-dd";
     public static final Logger log = Logger.getLogger(TaskController.class);
     @Autowired(required = true)
     private TaskService taskService;
@@ -42,55 +39,60 @@ public class TaskController {
 
     }
 
-    @RequestMapping(value = "/showAllRequestsByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/showAllRequestsByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllRequestsByEmployeeIdPage(@RequestParam("employeeId") Long employeeId,
                                                   Model model) {
         log.info("/showAllRequestsByEmployeeIdPage code.controller.TaskController");
         Employee employee = employeeService.getEmployeeById(employeeId);
+        model.addAttribute("employee", employee);
         model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsChangeRequest(employee));
         return "employeeDashboardChangeRequestTask";
     }
 
-    @RequestMapping(value = "/showAllRefusedTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/showAllRefusedTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllRefusedTasksByEmployeeIdPage(@RequestParam("employeeId") Long employeeId,
                                                       Model model) {
         log.info("/showAllRefusedTasksByEmployeeIdPage code.controller.TaskController");
         Employee employee = employeeService.getEmployeeById(employeeId);
+        model.addAttribute("employee", employee);
         model.addAttribute("listTasks", taskService.getTasksByEmployeeWhichRefused(employee));
         return "employeeDashboardRefusedTask";
     }
 
-    @RequestMapping(value = "/showAllReadyToRunTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/showAllReadyToRunTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllReadyToRunTasksByEmployeeIdPage(@RequestParam("employeeId") Long employeeId,
                                                          Model model) {
         log.info("/showAllReadyToRunTasksByEmployeeIdPage code.controller.TaskController");
         Employee employee = employeeService.getEmployeeById(employeeId);
+        model.addAttribute("employee", employee);
         model.addAttribute("listTasks", taskService.getTasksByEmployeeWhichIsInSprint(employee));
         return "employeeDashboardReadyToRunTask";
     }
 
-    @RequestMapping(value = "/beginTask", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/beginTask", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String beginTask(@RequestParam("taskId") Long taskId,
                             Model model) {
         log.info("/beginTask code.controller.TaskController");
         Task task = taskService.getTaskById(taskId);
         task.setStatus(Status.InProgress);
         taskService.updateTask(task);
-
-        model.addAttribute("listTasks", taskService.getTasksByEmployeeWhichIsInSprint(task.getEmployee()));
+        Employee employee = task.getEmployee();
+        model.addAttribute("employee", employee);
+        model.addAttribute("listTasks", taskService.getTasksByEmployeeWhichIsInSprint(employee));
         return "employeeDashboardReadyToRunTask";
     }
 
-    @RequestMapping(value = "/showAllAssignedTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/showAllAssignedTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllAssignedTasksByEmployeeIdPage(@RequestParam("employeeId") Long employeeId,
                                                          Model model) {
         log.info("/showAllAssignedTasksByEmployeeIdPage code.controller.TaskController");
         Employee employee = employeeService.getEmployeeById(employeeId);
+        model.addAttribute("employee", employee);
         model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsAssigned(employee));
         return "employeeDashboardAssignedTask";
     }
 
-    @RequestMapping(value = "/requestEstimateTaskPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/requestEstimateTaskPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String requestEstimateTaskPage(@RequestParam("taskId") Long taskId,
                                Model model) {
         log.info("/requestEstimateTaskPage code.controller.TaskController");
@@ -98,7 +100,7 @@ public class TaskController {
         return "requestEstimateTask";
     }
 
-    @RequestMapping(value = "/requestEstimateTask", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/requestEstimateTask", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String requestEstimateTask(@RequestParam("taskId") Long taskId,
                                       @RequestParam("requestEstimate") Integer requestEstimate,
                                           Model model) {
@@ -107,71 +109,82 @@ public class TaskController {
         task.setRequestedEstimate(requestEstimate);
         task.setStatus(Status.ChangeRequest);
         taskService.updateTask(task);
-
-        model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsAssigned(task.getEmployee()));
+        Employee employee = task.getEmployee();
+        model.addAttribute("employee", employee);
+        model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsAssigned(employee));
         return "employeeDashboardAssignedTask";
     }
 
-    @RequestMapping(value = "/confirmTask", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/confirmTask", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String confirmTask(@RequestParam("taskId") Long taskId,
                               Model model) {
         log.info("/confirmTask code.controller.TaskController");
         Task task = taskService.getTaskById(taskId);
         task.setStatus(Status.Confirmed);
         taskService.updateTask(task);
-        model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsAssigned(task.getEmployee()));
+        Employee employee = task.getEmployee();
+        model.addAttribute("employee", employee);
+        model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsAssigned(employee));
         return "employeeDashboardAssignedTask";
     }
 
-    @RequestMapping(value = "/showAllCompletedTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/showAllCompletedTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllCompletedTasksByEmployeeIdPage(@RequestParam("employeeId") Long employeeId,
                                                      Model model) {
         log.info("/showAllCompletedTasksByEmployeeIdPage code.controller.TaskController");
         Employee employee = employeeService.getEmployeeById(employeeId);
+        model.addAttribute("employee", employee);
         model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsCompleted(employee));
         return "employeeDashboardCompletedTask";
     }
 
-    @RequestMapping(value = "/showAllInProgressTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/showAllInProgressTasksByEmployeeIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllInProgressTasksByEmployeeIdPage(@RequestParam("employeeId") Long employeeId,
                                                         Model model) {
         log.info("/showAllInProgressTasksByEmployeeIdPage code.controller.TaskController");
         Employee employee = employeeService.getEmployeeById(employeeId);
+        model.addAttribute("employee", employee);
         model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsInProgress(employee));
         return "employeeDashboardInProgressTask";
     }
 
-    @RequestMapping(value = "/completeTask", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/employee/completeTask", method = {RequestMethod.POST, RequestMethod.HEAD})
     public String completeTask(@RequestParam("taskId") Long taskId,
-                                                         Model model) {
+                               @RequestParam("actualEstimate") Integer actualEstimate,
+                               Model model) {
         log.info("/completeTask code.controller.TaskController");
         Task task = taskService.getTaskById(taskId);
         task.setStatus(Status.Completed);
         task.setActualCompletionDate(new Date());
+        task.setActualEstimate(actualEstimate);
         taskService.updateTask(task);
-        model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsInProgress(task.getEmployee()));
+        Employee employee = task.getEmployee();
+        model.addAttribute("employee", employee);
+        model.addAttribute("listTasks", taskService.getTasksByEmployeeWhereStatusIsInProgress(employee));
         return "employeeDashboardInProgressTask";
     }
 
-    @RequestMapping(value = "/showAllTasksByProjectManagerIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/showAllTasksByProjectManagerIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllTasksByProjectManagerIdPage(@RequestParam("managerId") Long managerId,
                                                      Model model) {
         log.info("/showAllTasksByProjectManagerIdPage code.controller.TaskController");
         Employee manager = employeeService.getEmployeeById(managerId);
+        model.addAttribute("manager", manager);
         model.addAttribute("listTasks", taskService.getTasksByProjectManager(manager));
         return "projectManagerDashboardTask";
     }
 
-    @RequestMapping(value = "/showAllRequestsByProjectManagerIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/showAllRequestsByProjectManagerIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllRequestsByProjectManagerIdPage(@RequestParam("managerId") Long managerId,
                                                         Model model) {
         log.info("/showAllRequestsByProjectManagerIdPage code.controller.TaskController");
         Employee manager = employeeService.getEmployeeById(managerId);
+        model.addAttribute("manager", manager);
         model.addAttribute("listTasks", taskService.getTasksByProjectManagerWhereStatusIsChangeRequest(manager));
         return "projectManagerDashboardRequest";
     }
 
-    @RequestMapping(value = "/confirmRequestPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/confirmRequestPage", method = {RequestMethod.GET, RequestMethod.HEAD})
      public String confirmRequestPage(@RequestParam("taskId") Long taskId,
                                       Model model) {
         log.info("/confirmRequestPage code.controller.TaskController");
@@ -180,46 +193,55 @@ public class TaskController {
         task.setRequestedEstimate(null);
         task.setStatus(Status.Assigned);
         taskService.updateTask(task);
-        model.addAttribute("listTasks", taskService.getTasksByProjectManagerWhereStatusIsChangeRequest(task.getProject().getProjectManager()));
+        Employee manager = task.getProject().getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listTasks", taskService.getTasksByProjectManagerWhereStatusIsChangeRequest(manager));
         return "projectManagerDashboardRequest";
     }
 
-    @RequestMapping(value = "/refuseRequestPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/refuseRequestPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String refuseRequestPage(@RequestParam("taskId") Long taskId,
                                      Model model) {
         log.info("/refuseRequestPage code.controller.TaskController");
         Task task = taskService.getTaskById(taskId);
         task.setStatus(Status.Assigned);
         taskService.updateTask(task);
-        model.addAttribute("listTasks", taskService.getTasksByProjectManagerWhereStatusIsChangeRequest(task.getProject().getProjectManager()));
+        Employee manager = task.getProject().getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listTasks", taskService.getTasksByProjectManagerWhereStatusIsChangeRequest(manager));
         return "projectManagerDashboardRequest";
     }
 
 
 
-    @RequestMapping(value = "/chooseTask", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/chooseTask", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String chooseInfluencingTask(@RequestParam("Id") Long id,
                                         @RequestParam("entityName") String entityName,
-                                        Model model) throws TaskAlreadyCompletedException{
+                                        Model model){
         log.info("/chooseTask code.controller.TaskController");
-        if(entityName == "Task"){
+        if(entityName.equals("Task")){
             Task task = taskService.getTaskById(id);
             if(Status.Completed.equals(task.getStatus())){
-                throw new TaskAlreadyCompletedException("Task <" + task.getTaskName() + "> already completed! Can not be edit.");
+                String errorMassage = "Task <" + task.getTaskName() + "> already completed! Can not be edit.";
+                model.addAttribute("errorMassage", errorMassage);
+                model.addAttribute("reference", "/projectManager/showAllSprintsByProjectManagerIdPage?managerId=" + task.getProject().getProjectManager().getUserId());
+                log.warn(errorMassage);
+                return "errorPage";
             }
-            model.addAttribute("reference", "addInfluencingTask");
-            model.addAttribute("listTasks", taskService.getTasksByProject(task.getProject()));
+            model.addAttribute("reference", "projectManager/addInfluencingTask");
+            List<Task> tasks = taskService.getAnotherTasksByProject(task.getProject(), task.getTaskId());
+            model.addAttribute("listTasks", tasks);
         }
-        if(entityName == "Sprint"){
+        if(entityName.equals("Sprint")){
             Sprint sprint = sprintService.getSprintById(id);
-            model.addAttribute("reference", "addTaskToSprint");
+            model.addAttribute("reference", "projectManager/addTaskToSprint");
             model.addAttribute("listTasks", taskService.getTasksByProjectWhereSprintIsNull(sprint.getProject()));
         }
         model.addAttribute("Id", id);
         return "chooseTask";
     }
 
-    @RequestMapping(value = "/addInfluencingTask", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/addInfluencingTask", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String addInfluencingTask(@RequestParam("taskId") Long taskId,
                                      @RequestParam("Id") Long parentTaskId,
                                      Model model) {
@@ -227,13 +249,16 @@ public class TaskController {
         Task task = taskService.getTaskById(taskId);
         Task parentTask = taskService.getTaskById(parentTaskId);
         parentTask.addInfluencingTask(task);
+        task.setParentInfluencingTask(parentTask);
         taskService.updateTask(parentTask);
-
-        model.addAttribute("listTasks", taskService.getTasksByProjectManager(parentTask.getProject().getProjectManager()));
+        taskService.updateTask(task);
+        Employee manager = parentTask.getProject().getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listTasks", taskService.getTasksByProjectManager(manager));
         return "projectManagerDashboardTask";
     }
 
-    @RequestMapping(value = "/addEmployeeForTask", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/addEmployeeForTask", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String addEmployeeForTask(@RequestParam("taskId") Long taskId,
                                      @RequestParam("empId") Long empId,
                                      Model model) {
@@ -246,12 +271,14 @@ public class TaskController {
         employee.addTask(task);
         employeeService.updateEmployee(employee);
 
-        model.addAttribute("listTasks", taskService.getTasksByProjectManager(task.getProject().getProjectManager()));
+        Employee manager = task.getProject().getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listTasks", taskService.getTasksByProjectManager(manager));
         return "projectManagerDashboardTask";
     }
 
 
-    @RequestMapping(value = "/createTaskPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/createTaskPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String createTaskPage(@RequestParam("projectId") Long projectId,
                                  Model model) {
         log.info("/createTaskPage code.controller.TaskController");
@@ -260,26 +287,29 @@ public class TaskController {
         return "createTask";
     }
 
-    @RequestMapping(value = "/createTask", method = {RequestMethod.POST})
+    @RequestMapping(value = "/projectManager/createTask", method = {RequestMethod.POST})
     public String createTask(@RequestParam("name") String name,
                              @RequestParam("qualifications") String qualification,
                              @RequestParam("estimate") Integer estimate,
                              @RequestParam("description") String description,
                              @RequestParam("projectId") Long projectId,
-                             Model model) throws EntityAlreadyExistException {
+                             Model model){
         log.info("/createTask code.controller.TaskController");
-//        try {
-
         Project project = projectService.getProjectById(projectId);
-        Long taskId = taskService.createTask(name, estimate, description, Qualification.valueOf(qualification), project);
+        Long taskId = null;
+        try {
+            taskId = taskService.createTask(name, estimate, description, Qualification.valueOf(qualification), project);
+        } catch (EntityAlreadyExistException e) {
+            model.addAttribute("errorMassage", e.getMessage());
+            model.addAttribute("reference", "/projectManager/createTaskPage?projectId=" + projectId);
+            log.warn(e.getMessage(), e);
+            return "errorPage";
+        }
         project.addTask(taskService.getTaskById(taskId));
         projectService.updateProject(project);
-//        } catch (EntityAlreadyExistException employeeAlreadyExistsExeption) {
-//            employeeAlreadyExistsExeption.printStackTrace();
-//        }
-
-
-        model.addAttribute("listTasks", taskService.getTasksByProjectManager(project.getProjectManager()));
+        Employee manager = project.getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listTasks", taskService.getTasksByProjectManager(manager));
         return "projectManagerDashboardTask";
     }
 
@@ -292,19 +322,23 @@ public class TaskController {
 //        return "showTasks";
 //    }
 
-    @RequestMapping(value = "/editTaskPage", method = {RequestMethod.GET})
+    @RequestMapping(value = "/projectManager/editTaskPage", method = {RequestMethod.GET})
     public String editTaskPage(@RequestParam("taskId") Long taskId,
-                               Model model) throws TaskAlreadyCompletedException{
+                               Model model){
         log.info("/editTaskPage code.controller.TaskController");
         Task task = taskService.getTaskById(taskId);
         if(Status.Completed.equals(task.getStatus())){
-            throw new TaskAlreadyCompletedException("Task <" + task.getTaskName() + "> already completed! Can not be edit.");
+            String errorMassage = "Task <" + task.getTaskName() + "> already completed! Can not be edit.";
+            model.addAttribute("errorMassage", errorMassage);
+            model.addAttribute("reference", "/projectManager/showAllTasksByProjectManagerIdPage?managerId=" + task.getProject().getProjectManager().getUserId());
+            log.warn(errorMassage);
+            return "errorPage";
         }
         model.addAttribute("task", task);
         return "editTask";
     }
 
-    @RequestMapping(value = "/editTask", method = {RequestMethod.POST})
+    @RequestMapping(value = "/projectManager/editTask", method = {RequestMethod.POST})
     public String editTask(@RequestParam("taskId") Long taskId,
                            @RequestParam("name") String name,
                            @RequestParam("description") String description,
@@ -315,17 +349,21 @@ public class TaskController {
         task.setTaskName(name);
         task.setTaskDescription(description);
         taskService.updateTask(task);
+        Employee manager = task.getProject().getProjectManager();
+        model.addAttribute("manager", manager);
 
-        model.addAttribute("listTasks", taskService.getTasksByProjectManager(task.getProject().getProjectManager()));
+        model.addAttribute("listTasks", taskService.getTasksByProjectManager(manager));
         return "projectManagerDashboardTask";
     }
 
-    @RequestMapping(value = "/deleteTaskPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/deleteTaskPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String deleteTaskPage(@RequestParam("taskId") Long taskId,
                                  Model model) {
         log.info("/deleteTaskPage code.controller.TaskController");
         Task task = taskService.getTaskById(taskId);
-        model.addAttribute("listTasks", taskService.getTasksByProjectManager(task.getProject().getProjectManager()));
+        Employee manager = task.getProject().getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listTasks", taskService.getTasksByProjectManager(manager));
         taskService.deleteTask(taskId);
         return "projectManagerDashboardTask";
     }

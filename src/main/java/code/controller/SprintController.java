@@ -1,8 +1,6 @@
 package code.controller;
 
 import code.domain.*;
-import code.exception.DateOutOfSprintDateBoundsException;
-import code.exception.TaskNotConfirmedException;
 import code.service.EmployeeService;
 import code.service.ProjectService;
 import code.service.SprintService;
@@ -26,7 +24,7 @@ import java.util.Date;
 @Controller
 @SessionAttributes("SprintController")
 public class SprintController {
-    private static final String DATE_PATTERN = "yyyy-mm-dd";
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
     public static final Logger log = Logger.getLogger(EmployeeController.class);
     @Autowired(required = true)
     private SprintService sprintService;
@@ -41,27 +39,30 @@ public class SprintController {
     }
 
 
-    @RequestMapping(value = "/showAllSprintsByProjectManagerIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/showAllSprintsByProjectManagerIdPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String showAllSprintsByProjectManagerIdPage(@RequestParam("managerId") Long managerId,
                                       Model model) {
         log.info("/showAllSprintsByProjectManagerIdPage code.controller.SprintController");
         Employee manager = employeeService.getEmployeeById(managerId);
+        model.addAttribute("manager", manager);
         model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(manager));
         return "projectManagerDashboardSprint";
     }
 
 
-    @RequestMapping(value = "/deleteSprintPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/deleteSprintPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String deleteSprintPage(@RequestParam("sprintId") Long sprintId,
                                    Model model) {
 
         Sprint sprint = sprintService.getSprintById(sprintId);
-        model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(sprint.getProject().getProjectManager()));
+        Employee manager = sprint.getProject().getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(manager));
         sprintService.deleteSprint(sprintId);
         return "projectManagerDashboardSprint";
     }
 
-    @RequestMapping(value = "/editSprintPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/editSprintPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String editSprintPage(@RequestParam("sprintId") Long sprintId,
                                    Model model) {
 
@@ -73,7 +74,7 @@ public class SprintController {
 
 
 
-    @RequestMapping(value = "/createSprintPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/createSprintPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String createSprintPage(@RequestParam("projectId") Long projectId,
                                    Model model) {
         log.info("/createSprintPage code.controller.SprintController");
@@ -81,30 +82,49 @@ public class SprintController {
         return "createSprint";
     }
 
-
-    @RequestMapping(value = "/createSprint", method = {RequestMethod.POST})
+    //ѕроверка того, что фазы выполн€ютс€ последовательно
+    //фазы и проект будут выполнены в срок (или с задержкой)
+    @RequestMapping(value = "/projectManager/createSprint", method = {RequestMethod.POST})
     public String createSprint(@RequestParam("name") String name,
                                @RequestParam("projectId") Long projectId,
                                @RequestParam("sprint") Long sprintId,
                                @RequestParam("finishDate") String finishDate,
-                               Model model) throws ParseException{
+                               Model model){
         log.info("/createSprint code.controller.SprintController");
 
         Project project = projectService.getProjectById(projectId);
         if(project == null){
-            throw new NullPointerException("There is not Project with id = " + projectId);
+            String errorMassage = "There is not Project with id = " + projectId;
+            model.addAttribute("errorMassage", errorMassage);
+            model.addAttribute("reference", "/projectManager/createSprintPage?projectId=" + projectId);
+            log.warn(errorMassage);
+            return "errorPage";
         }
 
         SimpleDateFormat format = new SimpleDateFormat();
         format.applyPattern(DATE_PATTERN);
-        Date finishDateConverted = format.parse(finishDate);
+        Date finishDateConverted = null;
+        try {
+            finishDateConverted = format.parse(finishDate);
+        } catch (ParseException e) {
+            model.addAttribute("errorMassage", "Date is incorrect format. Should be " + DATE_PATTERN);
+            model.addAttribute("reference", "/projectManager/createSprintPage?projectId=" + projectId);
+            log.warn(e.getMessage(), e);
+            return "errorPage";
+        }
         if(finishDateConverted.after(project.getProjectFinishDate())){
-            throw new IllegalArgumentException("Finish date of sprint after finish date of project");
-
+            String errorMassage = "Finish date of sprint after finish date of project";
+            model.addAttribute("errorMassage", errorMassage);
+            model.addAttribute("reference", "/projectManager/createSprintPage?projectId=" + projectId);
+            log.warn(errorMassage);
+            return "errorPage";
         }
         if(sprintId == -1 && project.getSprints() != null ){
-            throw new IllegalArgumentException("Previous sprint has not been chosen");
-
+            String errorMassage = "Previous sprint has not been chosen";
+            model.addAttribute("errorMassage", errorMassage);
+            model.addAttribute("reference", "/projectManager/createSprintPage?projectId=" + projectId);
+            log.warn(errorMassage);
+            return "errorPage";
         }
         if(sprintId == -1 && project.getSprints() == null ){
             Long newSprintId = sprintService.createSprint(name, project, null, finishDateConverted);
@@ -115,31 +135,46 @@ public class SprintController {
 
         Sprint previousSprint = sprintService.getSprintById(sprintId);
         if (finishDateConverted.before(previousSprint.getSprintFinishDate())){
-            throw new IllegalArgumentException("Finish date of sprint before finish date of previous sprint");
+            String errorMassage = "Finish date of sprint before finish date of previous sprint";
+            model.addAttribute("errorMassage", errorMassage);
+            model.addAttribute("reference", "/projectManager/createSprintPage?projectId=" + projectId);
+            log.warn(errorMassage);
+            return "errorPage";
         }
         Long newSprintId = sprintService.createSprint(name, project, previousSprint, finishDateConverted);
         Sprint sprint = sprintService.getSprintById(newSprintId);
         project.addSprint(sprint);
         projectService.updateProject(project);
 
-        model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(project.getProjectManager()));
+        Employee manager = project.getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(manager));
         return "projectManagerDashboardSprint";
     }
 
-    @RequestMapping(value = "/addTaskToSprintEditPage", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/addTaskToSprintEditPage", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String addTaskToSprintPage(@RequestParam("taskId") Long taskId,
                                       @RequestParam("sprintId") Long sprintId,
                                       @RequestParam("startDate") String startDate,
                                       @RequestParam("finishDate") String finishDate,
-                                     Model model) throws ParseException{
+                                     Model model){
         log.info("/addTaskToSprintPage code.controller.SprintController");
 
         Task task = taskService.getTaskById(taskId);
         Sprint sprint = sprintService.getSprintById(sprintId);
         SimpleDateFormat format = new SimpleDateFormat();
         format.applyPattern(DATE_PATTERN);
-        Date startDateConverted = format.parse(startDate);
-        Date finishDateConverted = format.parse(finishDate);
+        Date startDateConverted = null;
+        Date finishDateConverted = null;
+        try {
+            startDateConverted = format.parse(startDate);
+            finishDateConverted = format.parse(finishDate);
+        } catch (ParseException e) {
+            model.addAttribute("errorMassage", "Date is incorrect format. Should be " + DATE_PATTERN);
+            model.addAttribute("reference", "/projectManager/addTaskToSprintRedirect?taskId=" + taskId + "&sprintId=" + sprintId);
+            log.warn(e.getMessage(), e);
+            return "errorPage";
+        }
         task.setStartDate(startDateConverted);
         task.setExpectedCompletionDate(finishDateConverted);
         task.setSprint(sprint);
@@ -147,52 +182,91 @@ public class SprintController {
         sprint.addTask(task);
         sprintService.updateSprint(sprint);
 
-
-        model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(sprint.getProject().getProjectManager()));
+        Employee manager = sprint.getProject().getProjectManager();
+        model.addAttribute("manager", manager);
+        model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(manager));
         return "projectManagerDashboardSprint";
     }
 
-    @RequestMapping(value = "/addTaskToSprint", method = {RequestMethod.GET, RequestMethod.HEAD})
+    @RequestMapping(value = "/projectManager/addTaskToSprintRedirect", method = {RequestMethod.GET, RequestMethod.HEAD})
+    public String addTaskToSprintRedirect(@RequestParam("taskId") Long taskId,
+                                      @RequestParam("sprintId") Long sprintId,
+                                      Model model){
+        log.info("/addTaskToSprintRedirect code.controller.SprintController");
+
+        model.addAttribute("task", taskService.getTaskById(taskId));
+        model.addAttribute("sprint", sprintService.getSprintById(sprintId));
+        return "editStartDateTask";
+    }
+
+   // ѕроверка того, что зависимые задачи выполн€ютс€ в правильной последовательности
+   // ѕроверка того, что у сотрудников нет овертаймов
+    @RequestMapping(value = "/projectManager/addTaskToSprint", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String addInfluencingTask(@RequestParam("taskId") Long taskId,
                                      @RequestParam("Id") Long sprintId,
-                                     Model model) throws TaskNotConfirmedException, DateOutOfSprintDateBoundsException {
+                                     Model model){
         log.info("/addTaskToSprint code.controller.SprintController");
         Task task = taskService.getTaskById(taskId);
         Sprint sprint = sprintService.getSprintById(sprintId);
+        Employee manager = sprint.getProject().getProjectManager();
         if(Status.Confirmed.equals(task.getStatus())){
-            if(task.getInfluencingTasks() == null){
-                sprint.addTask(task);
-                sprintService.updateSprint(sprint);
-                task.setSprint(sprint);
-                taskService.updateTask(task);
+            if(task.getInfluencingTasks() == null || task.getInfluencingTasks().isEmpty()){
+                model.addAttribute("task", task);
+                model.addAttribute("sprint", sprint);
+                return "editStartDateTask";
             }else {
                 for(Task influencingTask: task.getInfluencingTasks()){
                     Date expectedCompletionDate = influencingTask.getExpectedCompletionDate();
                     if(expectedCompletionDate != null){
                         if(expectedCompletionDate.after(sprint.getSprintStartDate())){
-                            throw new DateOutOfSprintDateBoundsException("Influencing task <"
+                            String errorMassage = "Influencing task <"
                                     + influencingTask.getTaskName() + "> will be completed from "
                                     + influencingTask.getStartDate() + " to "
                                     + influencingTask.getExpectedCompletionDate()
-                                    + "Therefore, this task can not be added to the Sprint");
+                                    + "Therefore, this task can not be added to the Sprint";
+                            model.addAttribute("errorMassage", errorMassage);
+                            model.addAttribute("reference", "/projectManager/showAllSprintsByProjectManagerIdPage?managerId=" + manager.getUserId());
+                            log.warn(errorMassage);
+                            return "errorPage";
                         } else{
-                            model.addAttribute("task", task);
-                            model.addAttribute("sprint", sprint);
-                            return "editStartDateTask";
+                            ViewEmployee employee = employeeService.findEmployeeIfHasOvertime(sprint, task.getEmployee().getUserId());
+                            if(employee != null){
+                                String question = "Employee " + employee.getSurname() + " " + employee.getName() + " has overtime " + employee.getOvertime() + " hour(s). Would you like to add this task anyway?";
+                                String referenceYes = "/projectManager/addTaskToSprintRedirect?taskId=" + influencingTask.getTaskId() + "&Id=" + sprint.getSprintId();
+                                String referenceNo = "/projectManager/showAllSprintsByProjectManagerIdPage?managerId=" + manager.getUserId();
+                                model.addAttribute("question", question);
+                                model.addAttribute("referenceYes", referenceYes);
+                                model.addAttribute("referenceNo", referenceNo);
+                                return "question";
+                            } else{
+                                model.addAttribute("task", task);
+                                model.addAttribute("sprint", sprint);
+                                return "editStartDateTask";
+                            }
                         }
                     } else {
-                        model.addAttribute("task", influencingTask);
-                        model.addAttribute("sprint", sprint);
+                        String question = "Influencing task <" + influencingTask.getTaskName() + "> is not added to any Sprints. Would you like to add this Task to this Sprint?";
+                        String referenceYes = "/projectManager/addTaskToSprint?taskId=" + influencingTask.getTaskId() + "&Id=" + sprint.getSprintId();
+                        String referenceNo = "/projectManager/showAllSprintsByProjectManagerIdPage?managerId=" + manager.getUserId();
+                        model.addAttribute("question", question);
+                        model.addAttribute("referenceYes", referenceYes);
+                        model.addAttribute("referenceNo", referenceNo);
                         return "question";
                     }
                 }
             }
         } else {
-            throw new TaskNotConfirmedException("Task <" + task.getTaskName() + "> not confirmed! Can not be added.");
+            String errorMassage = "Task <" + task.getTaskName() + "> not confirmed! Can not be added.";
+            model.addAttribute("errorMassage", errorMassage);
+            model.addAttribute("reference", "/projectManager/showAllSprintsByProjectManagerIdPage?managerId=" + manager.getUserId());
+            log.warn(errorMassage);
+            return "errorPage";
         }
 
 
-        model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(sprint.getProject().getProjectManager()));
+
+        model.addAttribute("manager", manager);
+        model.addAttribute("listSprints", sprintService.getSprintsByProjectManager(manager));
         return "projectManagerDashboardSprint";
     }
 }

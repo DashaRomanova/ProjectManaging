@@ -3,6 +3,7 @@ package code.service;
 import code.domain.Employee;
 import code.domain.Project;
 import code.domain.Sprint;
+import code.domain.SprintStatisticReport;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.List;
 public interface SprintService {
     Long createSprint(String name, Project project, Sprint previousSprint, Date sprintFinishDate);
     Sprint getSprintById(Long id);
-    List<Sprint> getSprintsByProject(Project project);
     List<Sprint> getSprintsByProjectManager(Employee manager);
 
     void updateSprint (Sprint sprint);

@@ -35,7 +35,7 @@
     <tbody>
     <c:if test= "${fn:length(listEmployees) > 0}">
       <c:forEach items="${listEmployees}" var="employee" varStatus="loopStatus">
-        <tr onclick="location.href='/addEmployeeForTask?taskId=${task.taskId}&empId=${employee.userId}'">
+        <tr onclick="location.href='/projectManager/addEmployeeForTask?taskId=${task.taskId}&empId=${employee.userId}'">
           <td>${loopStatus.index+1}</td>
           <td>${employee.name}</td>
           <td>${employee.surname}</td>
@@ -44,7 +44,7 @@
     </tbody>
   </table>
   <div class="col-md-offset-1 col-sm-11">
-    <a class="btn btn-lg btn-primary" href="/showAllTasksByProjectManagerIdPage?managerId=${task.project.projectManager.userId}" role="button">Cancel</a>
+    <a class="btn btn-lg btn-primary" href="/projectManager/showAllTasksByProjectManagerIdPage?managerId=${task.project.projectManager.userId}" role="button">Cancel</a>
   </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

@@ -24,14 +24,15 @@
   <div class="row">
     <h1>Edit Customer</h1>
   </div>
-  <form class="form-horizontal" action="/editCustomer" method="POST">
+  <form class="form-horizontal" action="/admin/editCustomer" method="POST">
     <div class="form-group has-feedback">
       <div class="col-md-2">
         <label class="control-label" for="login">Login:</label>
       </div>
       <div class="col-md-10">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="hidden" id="customerId" name="customerId" value='${customer.userId}'/>
-        <input type="text" class="form-control" id="login" name="login" value="${customer.login}" required placeholder="Enter login">
+        <input type="text" class="form-control" id="login" name="login" value="${customer.username}" required placeholder="Enter login">
         <span class="glyphicon form-control-feedback"></span>
       </div>
     </div>
@@ -66,7 +67,7 @@
         <button type="submit" class="btn btn-lg btn-primary">Edit</button>
       </div>
       <div class="col-sm-9">
-        <a class="btn btn-lg btn-primary" href="/showAllCustomersPage" role="button">Cancel</a>
+        <a class="btn btn-lg btn-primary" href="/admin/showAllCustomersPage" role="button">Cancel</a>
       </div>
     </div>
   </form>

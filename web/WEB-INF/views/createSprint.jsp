@@ -26,12 +26,13 @@
   <div class="row">
     <h4>Project: ${project.projectName}</h4>
   </div>
-  <form class="form-horizontal" action="/createSprint" method="POST">
+  <form class="form-horizontal" action="/projectManager/createSprint" method="POST">
     <div class="form-group has-feedback">
       <div class="col-md-2">
         <label class="control-label" for="name">Name:</label>
       </div>
       <div class="col-md-10">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="hidden" id="projectId" name="projectId" value="${project.projectId}"/>
         <input type="text" class="form-control" id="name" name="name" required placeholder="Enter name">
         <span class="glyphicon form-control-feedback"></span>
@@ -67,7 +68,7 @@
         <button type="submit" class="btn btn-lg btn-primary">Create</button>
       </div>
       <div class="col-sm-9">
-        <a class="btn btn-lg btn-primary" href="/showAllSprintsByProjectManagerIdPage?managerId=${project.projectManager.userId}" role="button">Cancel</a>
+        <a class="btn btn-lg btn-primary" href="/projectManager/showAllSprintsByProjectManagerIdPage?managerId=${project.projectManager.userId}" role="button">Cancel</a>
       </div>
     </div>
   </form>

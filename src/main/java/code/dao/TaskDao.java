@@ -1,10 +1,8 @@
 package code.dao;
 
-import code.domain.Employee;
-import code.domain.Project;
-import code.domain.Status;
-import code.domain.Task;
+import code.domain.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,6 +18,7 @@ public interface TaskDao {
 
     List<Task> findTasksByProjectManager(Employee manager);
     List<Task> findTasksByProject(Project project);
+    List<Task> findAnotherTasksByProject(Project project, Long taskId);
     List<Task> findTasksByProjectWhereSprintIsNull(Project project);
     List<Task> findTasksByProjectManagerWhereStatusIsChangeRequest(Employee projectManager);
     List<Task> findTasksByEmployeeWhereStatusIsCompleted(Employee employee);//Status = Completed
@@ -28,4 +27,10 @@ public interface TaskDao {
     List<Task> findTasksByEmployeeWhereStatusIsAssigned(Employee employee);//Status = Assigned, requestedEstimate = null
     List<Task> findTasksByEmployeeWhichRefused(Employee employee);//Status = Assigned, requestedEstimate != null
     List<Task> findTasksByEmployeeWhereStatusIsChangeRequest(Employee employee);//Status = ChangeRequest, requestedEstimate != null
+
+    //SprintStatisticReport getTaskStatisticBySprint(Long sprintId);
+
+    List<TaskReportView> getTaskStatisticBetweenDatesByEmployee(Long employeeId, Date start, Date end);
+
+    List<Task> findTasksWithDelayByEmployee(Employee employee);
 }

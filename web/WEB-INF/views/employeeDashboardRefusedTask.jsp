@@ -38,14 +38,17 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Settings</a></li>
-        <li><a href="#">Profile</a></li>
-        <li><a href="#">Help</a></li>
+        <c:url value="/j_spring_security_logout" var="logoutUrl" />
+        <form action="${logoutUrl}" method="post" id="logoutForm">
+          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+        </form>
+        <script>
+          function formSubmit() {
+            document.getElementById("logoutForm").submit();
+          }
+        </script>
+        <li><a href="javascript:formSubmit()">Logout</a></li>
       </ul>
-      <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" placeholder="Search...">
-      </form>
     </div>
   </div>
 </div>
@@ -54,48 +57,53 @@
   <div class="row">
     <div class="col-sm-3 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
-        <li><a href="/showAllCompletedTasksByEmployeeIdPage?employeeId=${employee.userId}">Completed Task</a></li>
-        <li><a href="/showAllInProgressTasksByEmployeeIdPage?managerId=${employee.userId}">Task in progress</a></li>
-        <li><a href="/showAllAssignedTasksByEmployeeIdPage?managerId=${employee.userId}">Assigned Task</a></li>
-        <li><a href="/showAllReadyToRunTasksByEmployeeIdPage?managerId=${employee.userId}">Task ready to run</a></li>
-        <li class="active"><a href="/showAllRefusedTasksByEmployeeIdPage?managerId=${employee.userId}">Refused request task</a></li>
-        <li><a href="/showAllRequestsByEmployeeIdPage?managerId=${employee.userId}">Requests</a></li>
+        <li><a href="/employee/showAllCompletedTasksByEmployeeIdPage?employeeId=${employee.userId}">Completed Task</a></li>
+        <li><a href="/employee/showAllInProgressTasksByEmployeeIdPage?employeeId=${employee.userId}">Task in progress</a></li>
+        <li><a href="/employee/showAllAssignedTasksByEmployeeIdPage?employeeId=${employee.userId}">Assigned Task</a></li>
+        <li><a href="/employee/showAllReadyToRunTasksByEmployeeIdPage?employeeId=${employee.userId}">Task ready to run</a></li>
+        <li class="active"><a href="/employee/showAllRefusedTasksByEmployeeIdPage?employeeId=${employee.userId}">Refused request task</a></li>
+        <li><a href="/employee/showAllRequestsByEmployeeIdPage?employeeId=${employee.userId}">Requests</a></li>
       </ul>
     </div>
     <div class="col-sm-9 col-sm-offset-2 col-md-10 col-md-offset-2 main">
-      <h1 class="page-header">Task</h1>
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Project</th>
-            <th>Estimate</th>
-            <th>Requested estimate</th>
-            <th>Confirm</th>
-            <th>Try again</th>
-          </tr>
-          </thead>
-          <tbody>
-          <c:if test= "${fn:length(listTasks) > 0}">
-            <c:forEach items="${listTasks}" var="task" varStatus="loopStatus">
-              <tr>
-                <td>${loopStatus.index+1}</td>
-                <td>${task.taskName}</td>
-                <td>${task.taskDescription}</td>
-                <td>${task.project.projectName}</td>
-                <td>${task.estimate}</td>
-                <td>${task.requestedEstimate}</td>
-                <td><a class="btn btn-default" href="/confirmTask?taskId=${task.taskId}" role="button">Confirm</a></td>
-                <td><a class="btn btn-default" href="/requestEstimateTaskPage?taskId=${task.taskId}" role="button">Try again</a></td>
-              </tr>
-            </c:forEach>
-          </c:if>
-          </tbody>
-        </table>
-      </div>
+    <c:choose>
+      <c:when test= "${fn:length(listTasks) > 0}">
+        <h1 class="page-header">Task</h1>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Project</th>
+              <th>Estimate</th>
+              <th>Requested estimate</th>
+              <th>Confirm</th>
+              <th>Try again</th>
+            </tr>
+            </thead>
+            <tbody>
+              <c:forEach items="${listTasks}" var="task" varStatus="loopStatus">
+                <tr>
+                  <td>${loopStatus.index+1}</td>
+                  <td>${task.taskName}</td>
+                  <td>${task.taskDescription}</td>
+                  <td>${task.project.projectName}</td>
+                  <td>${task.estimate}</td>
+                  <td>${task.requestedEstimate}</td>
+                  <td><a class="btn btn-default" href="/employee/confirmTask?taskId=${task.taskId}" role="button">Confirm</a></td>
+                  <td><a class="btn btn-default" href="/employee/requestEstimateTaskPage?taskId=${task.taskId}" role="button">Try again</a></td>
+                </tr>
+              </c:forEach>
+            </tbody>
+          </table>
+        </div>
+      </c:when>
+      <c:otherwise>
+        <h1 class="row">You do not have refuse!</h1>
+      </c:otherwise>
+    </c:choose>
     </div>
   </div>
 </div>

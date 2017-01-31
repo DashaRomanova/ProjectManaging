@@ -38,14 +38,18 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Settings</a></li>
-        <li><a href="#">Profile</a></li>
-        <li><a href="#">Help</a></li>
+        <c:url value="/j_spring_security_logout" var="logoutUrl" />
+        <form action="${logoutUrl}" method="post" id="logoutForm">
+          <input type="hidden" name="${_csrf.parameterName}"
+                 value="${_csrf.token}" />
+        </form>
+        <script>
+          function formSubmit() {
+            document.getElementById("logoutForm").submit();
+          }
+        </script>
+        <li><a href="javascript:formSubmit()">Logout</a></li>
       </ul>
-      <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" placeholder="Search...">
-      </form>
     </div>
   </div>
 </div>
@@ -54,15 +58,9 @@
   <div class="row">
     <div class="col-sm-3 col-md-2 sidebar">
       <ul class="nav nav-sidebar">
-        <li><a href="/showAllProjectsPage">Project</a></li>
-        <li><a href="/showAllEmployeesPage">Employee</a></li>
-        <li class="active"><a href="/showAllCustomersPage">Customer</a></li>
-      </ul>
-      <ul class="nav nav-sidebar">
-        <li><a href="#">Overview</a></li>
-        <li><a href="#">Reports</a></li>
-        <li><a href="#">Analytics</a></li>
-        <li><a href="#">Export</a></li>
+        <li><a href="/admin/showAllProjectsPage">Project</a></li>
+        <li><a href="/admin/showAllEmployeesPage">Employee</a></li>
+        <li class="active"><a href="/admin/showAllCustomersPage">Customer</a></li>
       </ul>
     </div>
     <div class="col-sm-9 col-sm-offset-2 col-md-10 col-md-offset-2 main">
@@ -70,7 +68,7 @@
 
       <div class="row placeholders">
         <div class="col-xs-6 col-sm-3 placeholder">
-          <a class="btn btn-primary" href="/createCustomerPage" role="button">Add new customer</a></td>
+          <a class="btn btn-primary" href="/admin/createCustomerPage" role="button">Add new customer</a></td>
         </div>
       </div>
 
@@ -102,8 +100,8 @@
                     </c:if>
                   </select>
                 </td>
-                <td><a class="btn btn-default" href="/editCustomerPage?customerId=${customer.userId}" role="button">Edit</a></td>
-                <td><a class="btn btn-default" href="/deleteCustomerPage?customerId=${customer.userId}" role="button">Delete</a></td>
+                <td><a class="btn btn-default" href="/admin/editCustomerPage?customerId=${customer.userId}" role="button">Edit</a></td>
+                <td><a class="btn btn-default" href="/admin/deleteCustomerPage?customerId=${customer.userId}" role="button">Delete</a></td>
               </tr>
             </c:forEach>
           </c:if>
